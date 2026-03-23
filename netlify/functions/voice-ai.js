@@ -2,9 +2,9 @@
 // ElevenLabs natural voice with Polly fallback, Twilio signature validation, call logging
 const crypto = require("crypto");
 
-const BASE_URL = "https://nyspotlightreport.com/.netlify/functions/voice-ai";
-const AUDIO_URL = "https://nyspotlightreport.com/.netlify/functions/voice-audio";
-const CONV_URL = "https://nyspotlightreport.com/.netlify/functions/voice-conversation";
+const BASE_URL = "https://myproflow.netlify.app/.netlify/functions/voice-ai";
+const AUDIO_URL = "https://myproflow.netlify.app/.netlify/functions/voice-audio";
+const CONV_URL = "https://myproflow.netlify.app/.netlify/functions/voice-conversation";
 const VOICE = "Polly.Joanna";
 const USE_ELEVENLABS = process.env.ELEVENLABS_API_KEY ? true : false;
 

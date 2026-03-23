@@ -1,9 +1,9 @@
 // Voice Conversation AI — Claude-powered departmental bots
 // Handles real-time phone conversations via Twilio + Claude + ElevenLabs
 
-const BASE_URL = "https://nyspotlightreport.com/.netlify/functions/voice-ai";
-const CONV_URL = "https://nyspotlightreport.com/.netlify/functions/voice-conversation";
-const AUDIO_URL = "https://nyspotlightreport.com/.netlify/functions/voice-audio";
+const BASE_URL = "https://myproflow.netlify.app/.netlify/functions/voice-ai";
+const CONV_URL = "https://myproflow.netlify.app/.netlify/functions/voice-conversation";
+const AUDIO_URL = "https://myproflow.netlify.app/.netlify/functions/voice-audio";
 
 const SYSTEM_PROMPTS = {
   sales: `You are Emma, the ProFlow AI sales assistant at ProFlow. You help callers understand ProFlow — a done-for-you AI content engine that replaces an entire content team.
