@@ -176,12 +176,12 @@ exports.handler = async (event) => {
 
     return twiml(`
 ${play(greeting)}
-    <Gather input="speech" speechTimeout="auto" timeout="10"
+    <Gather input="speech" speechTimeout="1" timeout="5"
       action="${CONV_URL}?dept=${dept}&amp;turn=1&amp;history=${encodedHistory}" method="POST">
       <Pause length="0"/>
     </Gather>
 ${play("Are you still there? Feel free to ask me anything.")}
-    <Gather input="speech" speechTimeout="auto" timeout="8"
+    <Gather input="speech" speechTimeout="1" timeout="4"
       action="${CONV_URL}?dept=${dept}&amp;turn=1&amp;history=${encodedHistory}" method="POST">
       <Pause length="0"/>
     </Gather>
@@ -230,7 +230,7 @@ ${play("It's been wonderful talking with you! Let me transfer you so our team ca
   if (wantsTransfer) {
     return twiml(`
 ${play(aiResponse)}
-    <Pause length="1"/>
+    <Pause length="0"/>
 ${play("Please leave your message after the tone.")}
     <Record maxLength="120" transcribe="true"
       transcribeCallback="${BASE_URL}?step=transcription" playBeep="true"
@@ -239,12 +239,12 @@ ${play("Please leave your message after the tone.")}
 
   return twiml(`
 ${play(aiResponse)}
-    <Gather input="speech" speechTimeout="auto" timeout="10"
+    <Gather input="speech" speechTimeout="1" timeout="5"
       action="${CONV_URL}?dept=${dept}&amp;turn=${nextTurn}&amp;history=${encodedHistory}" method="POST">
       <Pause length="0"/>
     </Gather>
 ${play("I'm still here if you have any other questions.")}
-    <Gather input="speech" speechTimeout="auto" timeout="8"
+    <Gather input="speech" speechTimeout="1" timeout="4"
       action="${CONV_URL}?dept=${dept}&amp;turn=${nextTurn}&amp;history=${encodedHistory}" method="POST">
       <Pause length="0"/>
     </Gather>

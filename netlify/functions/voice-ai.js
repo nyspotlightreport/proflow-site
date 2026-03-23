@@ -66,7 +66,7 @@ exports.handler = async (event) => {
       // Route to live AI sales bot
       return twiml(`
 ${say("Great choice... Let me connect you with our sales assistant.")}
-    <Pause length="1"/>
+    <Pause length="0"/>
     <Redirect method="POST">${CONV_URL}?dept=sales&amp;turn=0&amp;history=</Redirect>`);
     }
 
@@ -74,7 +74,7 @@ ${say("Great choice... Let me connect you with our sales assistant.")}
       // Route to live AI support bot
       return twiml(`
 ${say("Sure thing... Let me connect you with our support specialist.")}
-    <Pause length="1"/>
+    <Pause length="0"/>
     <Redirect method="POST">${CONV_URL}?dept=support&amp;turn=0&amp;history=</Redirect>`);
     }
 
@@ -82,14 +82,14 @@ ${say("Sure thing... Let me connect you with our support specialist.")}
       // Route to live AI general assistant
       return twiml(`
 ${say("One moment please... Let me connect you with our assistant.")}
-    <Pause length="1"/>
+    <Pause length="0"/>
     <Redirect method="POST">${CONV_URL}?dept=general&amp;turn=0&amp;history=</Redirect>`);
     }
 
     // Unrecognized input
     return twiml(`
 ${say("I didn't quite catch that. No worries, let me give you the options again.")}
-    <Gather numDigits="1" timeout="6" action="${BASE_URL}?step=route" method="POST">
+    <Gather numDigits="1" timeout="4" action="${BASE_URL}?step=route" method="POST">
 ${say("Press 1 for sales and pricing. Press 2 for support. Press 0 to leave a message.")}
     </Gather>
 ${say("Goodbye.")}`);
@@ -100,18 +100,18 @@ ${say("Goodbye.")}`);
     if (digits === "2") {
       return twiml(`
 ${say("Let me connect you with our sales team.")}
-    <Pause length="1"/>
+    <Pause length="0"/>
 ${say("Our sales team is currently assisting other clients. Please leave your name and number after the tone.")}
     <Record maxLength="60" transcribe="true" transcribeCallback="${BASE_URL}?step=transcription" playBeep="true" action="${BASE_URL}?step=after-record" />`);
     }
 
     return twiml(`
 ${say("Let me walk you through our plans.")}
-    <Pause length="1"/>
+    <Pause length="0"/>
 ${say("Starter... 97 dollars per month. Includes daily blog posts, social media on 3 platforms, and H.D. images.")}
 ${say("Growth... 297 dollars per month. This is our most popular plan. It adds 6 platform social media, a weekly newsletter, an A.I. phone receptionist for your business, and weekly performance reports.")}
 ${say("Agency... 497 dollars per month. Everything in Growth, plus white-label capabilities, ad creative generation, and a dedicated account manager.")}
-    <Pause length="1"/>
+    <Pause length="0"/>
 ${say("All plans come with a 14 day delivery guarantee. No contracts. Cancel anytime.")}
     <Gather numDigits="1" timeout="5" action="${BASE_URL}?step=sales" method="POST">
 ${say("Press 2 to speak with our sales team. Press 0 to return to the main menu.")}
@@ -142,8 +142,8 @@ ${say("Thank you for your message. A member of our team will call you back withi
   // ── DEFAULT GREETING ───────────────────────────────
   return twiml(`
 ${say("Thank you for calling ProFlow. My name is Emma, and I am happy to assist you today.")}
-    <Pause length="1"/>
-    <Gather numDigits="1" timeout="8" action="${BASE_URL}?step=route" method="POST">
+    <Pause length="0"/>
+    <Gather numDigits="1" timeout="5" action="${BASE_URL}?step=route" method="POST">
 ${say("For sales and pricing information, press 1. For support, press 2. To leave a message for our team, press 0. Or simply stay on the line.")}
     </Gather>
 ${say("I did not receive a selection. No problem.")}
