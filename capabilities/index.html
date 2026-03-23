@@ -7,7 +7,7 @@
 <meta name="description" content="See everything ProFlow does: 30 daily blogs, social media, newsletters, voice AI, analytics. Calculate your ROI and compare to freelancers, agencies, and in-house teams.">
 <meta property="og:title" content="ProFlow Capabilities & ROI Calculator — ProFlow">
 <meta property="og:description" content="The complete AI content, marketing, and automation platform. One subscription replaces your entire content team.">
-<link rel="canonical" href="https://nyspotlightreport.com/capabilities/">
+<link rel="canonical" href="https://myproflow.org/capabilities/">
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -951,7 +951,7 @@ function captureExitLead(){
     body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
   fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
-  localStorage.setItem('nysr_lead',email);
+  localStorage.setItem('pf_lead',email);
   document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
   setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
 }

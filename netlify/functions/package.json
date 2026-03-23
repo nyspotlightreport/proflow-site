@@ -1,5 +1,5 @@
 {
-  "name": "nysr-functions",
+  "name": "proflow-functions",
   "version": "2.0.0",
   "dependencies": {
     "bcryptjs": "^2.4.3",

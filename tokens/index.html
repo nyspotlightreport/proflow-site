@@ -201,7 +201,7 @@ function captureExitLead(){
     body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
   fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
     body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
-  localStorage.setItem('nysr_lead',email);
+  localStorage.setItem('pf_lead',email);
   document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
   setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
 }

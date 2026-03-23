@@ -1,4 +1,4 @@
-const DEFAULT_ORIGIN = "https://nyspotlightreport.com";
+const DEFAULT_ORIGIN = "https://myproflow.netlify.app";
 
 function getAllowedOrigin() {
   return process.env.ALLOWED_ORIGIN || DEFAULT_ORIGIN;
