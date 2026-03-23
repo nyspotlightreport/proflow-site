@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Build Your Bundle — Mix & Match AI Agencies | ProFlow</title>
+<meta name="description" content="Pick any combination of our 15 AI agencies and save up to 55%. The more you add, the more you save.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf9f6;--paper:#fff;--ink:#0f0f0f;--g500:#6b6b6b;--g300:#a3a3a3;--g100:#e5e5e5;--accent:#9e7c0c;--green:#16793a;--red:#b91c1c;--serif:'Playfair Display',serif;--sans:'DM Sans',sans-serif}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+nav{background:var(--paper);border-bottom:1px solid var(--g100);padding:0 clamp(16px,4vw,48px);height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.nl{font-family:var(--serif);font-size:20px;font-weight:700}.nl span{color:var(--accent)}
+.nr a{font-size:12px;font-weight:600;color:var(--g500);margin-left:20px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+.hero{padding:48px 0 32px;text-align:center}
+.hero h1{font-family:var(--serif);font-size:clamp(28px,4vw,44px);font-weight:800;margin-bottom:12px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{font-size:17px;color:var(--g500);max-width:600px;margin:0 auto 16px;line-height:1.6}
+
+.tier-toggle{display:flex;justify-content:center;gap:0;margin-bottom:32px;background:var(--paper);border:1px solid var(--g100);border-radius:8px;overflow:hidden;max-width:300px;margin-left:auto;margin-right:auto}
+.tier-btn{flex:1;padding:12px 24px;font-size:14px;font-weight:700;text-align:center;cursor:pointer;border:none;background:transparent;color:var(--g500);font-family:var(--sans)}
+.tier-btn.active{background:var(--ink);color:#fff}
+
+.discount-bar{background:var(--ink);border-radius:8px;padding:16px 24px;display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;color:#fff;flex-wrap:wrap;gap:12px}
+.discount-bar .tiers{display:flex;gap:16px}
+.discount-tier{text-align:center;opacity:.5;transition:opacity .15s}
+.discount-tier.active{opacity:1}
+.discount-tier .count{font-family:var(--serif);font-size:20px;font-weight:800;color:var(--accent)}
+.discount-tier .pct{font-size:11px;color:rgba(255,255,255,.5)}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;margin-bottom:32px}
+.card{background:var(--paper);border:2px solid var(--g100);border-radius:10px;padding:24px;cursor:pointer;transition:all .15s;position:relative}
+.card:hover{border-color:var(--g300)}
+.card.selected{border-color:var(--accent);background:rgba(158,124,12,.03)}
+.card .check{position:absolute;top:16px;right:16px;width:24px;height:24px;border-radius:6px;border:2px solid var(--g300);display:flex;align-items:center;justify-content:center;font-size:14px;color:transparent;transition:all .15s}
+.card.selected .check{background:var(--accent);border-color:var(--accent);color:#fff}
+.card-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.card-icon{font-size:24px}
+.card-name{font-family:var(--serif);font-size:16px;font-weight:700}
+.card-desc{font-size:13px;color:var(--g500);line-height:1.5;margin-bottom:12px}
+.card-price{font-size:14px}.card-price strong{font-family:var(--serif);font-size:20px;color:var(--accent)}
+.card-replaces{font-size:11px;color:var(--red);margin-top:6px}
+
+.summary{position:sticky;bottom:0;background:var(--ink);padding:20px 32px;display:flex;justify-content:center;align-items:center;gap:24px;z-index:99;box-shadow:0 -4px 24px rgba(0,0,0,.15);transform:translateY(100%);transition:transform .3s ease;flex-wrap:wrap}
+.summary.show{transform:translateY(0)}
+.summary-text{color:rgba(255,255,255,.8);font-size:15px}
+.summary-text strong{color:#fff;font-family:var(--serif);font-size:20px}
+.summary-text .original{text-decoration:line-through;color:rgba(255,255,255,.3);font-size:13px;margin-left:4px}
+.summary-text .savings{color:var(--green);font-weight:700;font-size:14px}
+.summary-cta{background:var(--accent);color:#fff;padding:14px 32px;border-radius:6px;font-size:15px;font-weight:700;border:none;cursor:pointer;white-space:nowrap}
+.summary-cta:hover{background:#7d6209}
+
+.presets{margin-bottom:32px}
+.presets h2{font-family:var(--serif);font-size:22px;font-weight:700;margin-bottom:16px;text-align:center}
+.preset-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.preset{background:var(--paper);border:1px solid var(--g100);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s}
+.preset:hover{border-color:var(--accent)}
+.preset h3{font-family:var(--serif);font-size:18px;font-weight:700;margin-bottom:4px}
+.preset .price{font-family:var(--serif);font-size:24px;font-weight:800;color:var(--accent)}
+.preset .save{font-size:12px;color:var(--green);font-weight:600;margin-bottom:8px}
+.preset p{font-size:12px;color:var(--g500)}
+
+footer{border-top:1px solid var(--g100);padding:24px;text-align:center;font-size:11px;color:var(--g300);margin-top:48px}
+@media(max-width:768px){.grid{grid-template-columns:1fr}.discount-bar{flex-direction:column;text-align:center}.summary{flex-direction:column;text-align:center}}
+</style>
+</head>
+<body>
+<nav><a href="/" class="nl">Pro<span>Flow</span></a><div class="nr"><a href="/services/">All Services</a><a href="/demo/">Demo</a><a href="/store/">Pricing</a><a href="/login/">Sign In</a></div></nav>
+
+<div class="wrap">
+<div class="hero">
+<h1>Build your <em>perfect bundle</em></h1>
+<p>Pick the agencies you need. The more you add, the bigger your discount. Save up to 55% vs subscribing individually.</p>
+<div class="tier-toggle">
+<div class="tier-btn active" onclick="setTier('lite')">LITE</div>
+<div class="tier-btn" onclick="setTier('full')">FULL</div>
+</div>
+</div>
+
+<div class="discount-bar">
+<span style="font-size:13px;color:rgba(255,255,255,.5)">Your discount:</span>
+<div class="tiers">
+<div class="discount-tier" id="dt-3"><div class="count">3+</div><div class="pct">28% off</div></div>
+<div class="discount-tier" id="dt-5"><div class="count">5+</div><div class="pct">33% off</div></div>
+<div class="discount-tier" id="dt-8"><div class="count">8+</div><div class="pct">38% off</div></div>
+<div class="discount-tier" id="dt-15"><div class="count">15</div><div class="pct">55% off</div></div>
+</div>
+<div id="discount-label" style="font-size:14px;color:var(--accent);font-weight:700">Select agencies to start</div>
+</div>
+
+<div class="presets">
+<h2>Quick bundles</h2>
+<div class="preset-grid">
+<div class="preset" onclick="selectPreset('marketing')"><h3>Marketing Stack</h3><div class="price" id="pp-marketing"></div><div class="save">Content + Social + SEO + Email</div><p>4 agencies for complete marketing</p></div>
+<div class="preset" onclick="selectPreset('sales')"><h3>Sales Machine</h3><div class="price" id="pp-sales"></div><div class="save">Sales + Voice AI + Marketing + CRM</div><p>4 agencies for revenue growth</p></div>
+<div class="preset" onclick="selectPreset('ops')"><h3>Operations Suite</h3><div class="price" id="pp-ops"></div><div class="save">HR + Assistant + CS + Web Dev</div><p>4 agencies for business ops</p></div>
+<div class="preset" onclick="selectPreset('all')"><h3>Everything</h3><div class="price" id="pp-all"></div><div class="save">All 15 agencies · Max savings</div><p>Your complete AI team</p></div>
+</div>
+</div>
+
+<div class="grid" id="agency-grid"></div>
+</div>
+
+<div class="summary" id="summary">
+<div class="summary-text"><strong id="s-count">0</strong> agencies · <strong id="s-price">$0</strong>/mo <span class="original" id="s-original"></span> · <span class="savings" id="s-savings"></span></div>
+<button class="summary-cta" onclick="alert('Bundle checkout coming soon! Email Seanc11792@icloud.com to get started today.')">Subscribe to This Bundle →</button>
+</div>
+
+<footer>© 2024–2026 ProFlow · <a href="/services/" style="color:var(--accent)">All Services</a> · <a href="/demo/" style="color:var(--accent)">Demo</a> · 14-day guarantee · No contracts</footer>
+
+<script>
+var agencies=[
+{id:"content-studio",name:"Content Creation Studio",icon:"📝",desc:"30 SEO blog posts/month in your brand voice.",lite:67,full:297,replaces:"Writers $2K-4K/mo"},
+{id:"social-media",name:"Social Media Management",icon:"📱",desc:"Daily posts on 6 platforms with engagement tracking.",lite:67,full:297,replaces:"Social $1.5K-3K/mo"},
+{id:"seo",name:"SEO Agency",icon:"🔍",desc:"Technical audits, keyword research, rank tracking.",lite:57,full:247,replaces:"SEO $500-2K/mo"},
+{id:"email-marketing",name:"Email & Newsletter",icon:"✉️",desc:"Weekly newsletters, drip campaigns, A/B testing.",lite:47,full:197,replaces:"Email $400-1.5K/mo"},
+{id:"marketing",name:"Marketing Agency",icon:"📈",desc:"Full-funnel strategy, campaigns, analytics.",lite:97,full:397,replaces:"Marketing $3K-8K/mo"},
+{id:"sales-team",name:"Full Cycle Sales Team",icon:"💼",desc:"Lead gen, outreach, qualification, pipeline.",lite:97,full:497,replaces:"Sales $5K-15K/mo"},
+{id:"customer-service",name:"Customer Service",icon:"🎧",desc:"24/7 AI support, tickets, satisfaction tracking.",lite:67,full:297,replaces:"CS $2K-5K/mo"},
+{id:"voice-ai",name:"Voice AI & Appointments",icon:"📞",desc:"AI receptionist, sales bots, booking.",lite:57,full:247,replaces:"Receptionist $1.5K-3K/mo"},
+{id:"pr",name:"PR Agency",icon:"📰",desc:"Press releases, media outreach, reputation.",lite:67,full:297,replaces:"PR $3K-10K/mo"},
+{id:"hr",name:"HR, Hiring & Compliance",icon:"👥",desc:"Job postings, screening, onboarding, compliance.",lite:57,full:247,replaces:"HR $1K-4K/mo"},
+{id:"executive-assistant",name:"Executive Assistant",icon:"🗓️",desc:"Calendar, email triage, research, briefings.",lite:47,full:197,replaces:"VA $1.5K-3.5K/mo"},
+{id:"web-development",name:"Website Development",icon:"🌐",desc:"Full-stack builds, landing pages, maintenance.",lite:97,full:497,replaces:"Web dev $3K-10K/mo"},
+{id:"app-development",name:"App Development",icon:"📲",desc:"Mobile and desktop apps, UI/UX, deployment.",lite:97,full:497,replaces:"App dev $5K-25K/mo"},
+{id:"content-strategy",name:"Content Strategy",icon:"🗺️",desc:"Editorial calendars, audits, publishing workflows.",lite:57,full:247,replaces:"Strategist $2K-5K/mo"},
+{id:"creative-studio",name:"Creative Studio",icon:"🎨",desc:"HD images, graphics, ad creatives, brand assets.",lite:47,full:197,replaces:"Design $1.5K-4K/mo"}
+];
+
+var selected=new Set();
+var tier='lite';
+var presets={
+marketing:['content-studio','social-media','seo','email-marketing'],
+sales:['sales-team','voice-ai','marketing','customer-service'],
+ops:['hr','executive-assistant','customer-service','web-development'],
+all:agencies.map(function(a){return a.id})
+};
+
+function setTier(t){
+tier=t;
+document.querySelectorAll('.tier-btn').forEach(function(b){b.classList.remove('active')});
+document.querySelector('.tier-btn'+(t==='lite'?':first-child':':last-child')).classList.add('active');
+renderCards();updateSummary();updatePresetPrices();
+}
+
+function renderCards(){
+var grid=document.getElementById('agency-grid');
+grid.innerHTML='';
+agencies.forEach(function(a){
+var sel=selected.has(a.id);
+var price=tier==='lite'?a.lite:a.full;
+var card=document.createElement('div');
+card.className='card'+(sel?' selected':'');
+card.onclick=function(){toggleAgency(a.id)};
+card.innerHTML='<div class="check">✓</div><div class="card-head"><span class="card-icon">'+a.icon+'</span><span class="card-name">'+a.name+'</span></div><div class="card-desc">'+a.desc+'</div><div class="card-price"><strong>$'+price+'</strong>/mo <span style="font-size:12px;color:var(--g300)">'+tier.toUpperCase()+'</span></div><div class="card-replaces">Replaces '+a.replaces+'</div>';
+grid.appendChild(card);
+});
+}
+
+function toggleAgency(id){
+if(selected.has(id))selected.delete(id);else selected.add(id);
+renderCards();updateSummary();
+}
+
+function selectPreset(name){
+selected.clear();
+presets[name].forEach(function(id){selected.add(id)});
+renderCards();updateSummary();
+}
+
+function getDiscount(count){
+if(count>=15)return .55;if(count>=8)return .38;if(count>=5)return .33;if(count>=3)return .28;return 0;
+}
+
+function updateSummary(){
+var count=selected.size;
+var bar=document.getElementById('summary');
+if(count===0){bar.classList.remove('show');return}
+bar.classList.add('show');
+var total=0;
+selected.forEach(function(id){var a=agencies.find(function(x){return x.id===id});if(a)total+=(tier==='lite'?a.lite:a.full)});
+var discount=getDiscount(count);
+var bundlePrice=Math.round(total*(1-discount));
+var saved=total-bundlePrice;
+document.getElementById('s-count').textContent=count;
+document.getElementById('s-price').textContent='$'+bundlePrice;
+document.getElementById('s-original').textContent=discount>0?'$'+total:'';
+document.getElementById('s-savings').textContent=saved>0?'Save $'+saved+'/mo ('+Math.round(discount*100)+'% off)':'';
+// Update discount tier highlights
+['3','5','8','15'].forEach(function(n){
+var el=document.getElementById('dt-'+n);
+el.classList.toggle('active',count>=parseInt(n));
+});
+document.getElementById('discount-label').textContent=discount>0?Math.round(discount*100)+'% discount applied!':'Add '+(3-count)+' more for 28% off';
+}
+
+function updatePresetPrices(){
+for(var name in presets){
+var ids=presets[name];var total=0;
+ids.forEach(function(id){var a=agencies.find(function(x){return x.id===id});if(a)total+=(tier==='lite'?a.lite:a.full)});
+var disc=getDiscount(ids.length);
+var price=Math.round(total*(1-disc));
+var el=document.getElementById('pp-'+name);
+if(el)el.textContent='$'+price+'/mo';
+}
+}
+
+renderCards();updatePresetPrices();
+</script>
+</body>
+</html>
