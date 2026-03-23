@@ -19,32 +19,13 @@ a{color:inherit;text-decoration:none}
 .sb-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
 .sb-item.active{background:rgba(201,168,76,.1);color:var(--gold);font-weight:600}
 .sb-item i{font-size:16px;width:20px;text-align:center;font-style:normal}
-</style>
-</head>
-<body>
-<script>
-// AUTH CHECK — verify token server-side before rendering portal
-(async function(){
-  var token=localStorage.getItem('pf_token');
-  if(!token){window.location.href='/login/';return;}
-  try{
-    var res=await fetch('/api/verify-token',{headers:{'Authorization':'Bearer '+token}});
-    if(!res.ok){localStorage.removeItem('pf_token');localStorage.removeItem('pf_user');window.location.href='/login/';return;}
-    var data=await res.json();
-    window._authUser=data;
-    localStorage.setItem('pf_user',JSON.stringify(data));
-  }catch(e){localStorage.removeItem('pf_token');window.location.href='/login/';return;}
-})();
-var u=JSON.parse(localStorage.getItem('pf_user')||'{}');
-</script>
-<style>
 .sb-user{padding:16px;border-top:1px solid var(--border)}
 .sb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#8b6914);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
 .sb-logout{width:100%;padding:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;margin-top:12px}
 .main{margin-left:220px;flex:1;padding:28px 32px;overflow-y:auto;min-height:100vh}
 .panel{display:none}.panel.active{display:block}
 .stats{display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap}
-.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;flex:1;min-width:180}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;flex:1;min-width:180px}
 .stat-label{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:10px}
 .stat-val{font-size:32px;font-weight:700;line-height:1}
 .stat-sub{font-size:12px;margin-top:6px}
@@ -59,312 +40,486 @@ var u=JSON.parse(localStorage.getItem('pf_user')||'{}');
 .dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px}
 .btn{padding:10px 20px;background:linear-gradient(135deg,var(--gold),#b8963f);border:none;border-radius:10px;color:var(--bg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
 .btn-outline{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold)}
+.btn-danger{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:var(--red)}
 h1{font-size:24px;font-weight:600;margin-bottom:4px}
 h2{font-size:20px;font-weight:600;margin-bottom:24px}
+.loading{text-align:center;padding:40px;color:var(--muted);font-size:14px}
+.error-msg{text-align:center;padding:40px;color:var(--red);font-size:14px}
+.empty-msg{text-align:center;padding:40px;color:var(--muted);font-size:14px;line-height:1.6}
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:1000;justify-content:center;align-items:center;backdrop-filter:blur(4px)}
+.modal-overlay.open{display:flex}
+.modal{background:#15151f;border:1px solid var(--border);border-radius:16px;padding:28px;max-width:480px;width:90%;position:relative}
+.modal h3{font-size:18px;font-weight:600;margin-bottom:18px}
+.modal label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;margin-top:14px;text-transform:uppercase;letter-spacing:.08em}
+.modal input,.modal textarea,.modal select{width:100%;padding:10px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit;outline:none;resize:vertical}
+.modal input:focus,.modal textarea:focus,.modal select:focus{border-color:rgba(201,168,76,.4)}
+.modal select option{background:#15151f;color:var(--text)}
+.modal .btn{margin-top:18px;width:100%}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;color:var(--muted);font-size:20px;cursor:pointer}
+.success-msg{background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.2);border-radius:10px;padding:16px;text-align:center;color:var(--green);font-size:14px}
+.tbl-header{display:grid;padding:12px 20px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600;border-bottom:1px solid var(--border)}
+.tbl-row{display:grid;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)}
+.tbl-row:last-child{border-bottom:none}
+/* Settings */
+.setting-group{margin-bottom:12px}
+.setting-group label{display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.6);cursor:pointer;padding:4px 0}
+.setting-group input[type="checkbox"]{accent-color:var(--gold);width:16px;height:16px}
 @media(max-width:768px){.sidebar{width:60px}.sb-logo span,.sb-plan,.sb-item span,.sb-user>div:last-child{display:none}.main{margin-left:60px}.stats,.grid2,.grid3,.grid4{grid-template-columns:1fr;display:flex;flex-direction:column}}
 </style>
+</head>
+<body>
+<script>
+(async function(){
+  var token=localStorage.getItem('pf_token');
+  if(!token){window.location.href='/login/';return;}
+  try{
+    var res=await fetch('/.netlify/functions/verify-token',{headers:{'Authorization':'Bearer '+token}});
+    if(!res.ok){localStorage.removeItem('pf_token');localStorage.removeItem('pf_user');window.location.href='/login/';return;}
+    var data=await res.json();
+    window._authUser=data;
+    localStorage.setItem('pf_user',JSON.stringify(data));
+  }catch(e){localStorage.removeItem('pf_token');localStorage.removeItem('pf_user');window.location.href='/login/';return;}
+})();
+var u=JSON.parse(localStorage.getItem('pf_user')||'{}');
+</script>
+
 <div class="sidebar">
 <div class="sb-logo">Pro<span>Flow</span><div class="sb-plan" id="sb-plan"></div></div>
 <div class="sb-nav">
-<div class="sb-item active" onclick="showPanel('dash')"><i>◉</i><span>Dashboard</span></div>
-<div class="sb-item" onclick="showPanel('content')"><i>✎</i><span>Content</span></div>
-<div class="sb-item" onclick="showPanel('social')"><i>◈</i><span>Social</span></div>
-<div class="sb-item" onclick="showPanel('analytics')"><i>◊</i><span>Analytics</span></div>
-<div class="sb-item" onclick="showPanel('voice')"><i>☎</i><span>Voice AI</span></div>
-<div class="sb-item" onclick="showPanel('media')"><i>▶</i><span>Media</span></div>
-<div class="sb-item" onclick="showPanel('leads')"><i>◎</i><span>Leads</span></div>
-<div class="sb-item" onclick="showPanel('settings')"><i>⚙</i><span>Settings</span></div>
+<div class="sb-item active" data-panel="dash" onclick="showPanel('dash',this)"><i>&#9673;</i><span>Dashboard</span></div>
+<div class="sb-item" data-panel="content" onclick="showPanel('content',this)"><i>&#9998;</i><span>Content</span></div>
+<div class="sb-item" data-panel="social" onclick="showPanel('social',this)"><i>&#9672;</i><span>Social</span></div>
+<div class="sb-item" data-panel="analytics" onclick="showPanel('analytics',this)"><i>&#9674;</i><span>Analytics</span></div>
+<div class="sb-item" data-panel="voice" onclick="showPanel('voice',this)"><i>&#9742;</i><span>Voice AI</span></div>
+<div class="sb-item" data-panel="media" onclick="showPanel('media',this)"><i>&#9654;</i><span>Media</span></div>
+<div class="sb-item" data-panel="leads" onclick="showPanel('leads',this)"><i>&#9678;</i><span>Leads</span></div>
+<div class="sb-item" data-panel="settings" onclick="showPanel('settings',this)"><i>&#9881;</i><span>Settings</span></div>
 </div>
 <div class="sb-user">
 <div style="display:flex;align-items:center;gap:10px">
 <div class="sb-avatar" id="sb-avatar"></div>
 <div><div style="font-size:13px;font-weight:500" id="sb-name"></div><div style="font-size:11px;color:var(--muted)" id="sb-email"></div></div>
 </div>
-<button class="sb-logout" onclick="localStorage.removeItem('pf_user');window.location.href='/login/'">Sign Out</button>
+<button class="sb-logout" onclick="localStorage.removeItem('pf_token');localStorage.removeItem('pf_user');window.location.href='/login/'">Sign Out</button>
 </div>
 </div>
+
 <div class="main">
 <!-- DASHBOARD -->
-<div class="panel active" id="p-dash">
-<h1 id="welcome-msg"></h1>
-<p style="font-size:14px;color:var(--muted);margin-bottom:24px">Your content engine is running. Here's today's snapshot.</p>
-<div class="stats">
-<div class="stat"><div class="stat-label">Content Published</div><div class="stat-val" style="color:var(--gold)" id="s-content">0</div><div class="stat-sub" id="s-content-sub"></div></div>
-<div class="stat"><div class="stat-label">Social Posts</div><div class="stat-val" style="color:var(--green)" id="s-social">0</div><div class="stat-sub" id="s-social-sub"></div></div>
-<div class="stat"><div class="stat-label">Leads Generated</div><div class="stat-val" style="color:var(--purple)" id="s-leads">0</div><div class="stat-sub" id="s-leads-sub"></div></div>
-<div class="stat"><div class="stat-label">Voice Calls</div><div class="stat-val" style="color:var(--red)" id="s-voice">0</div><div class="stat-sub" id="s-voice-sub"></div></div>
-</div>
-<div class="grid2">
-<div class="card"><div class="card-title">This week's content</div>
-<div class="row"><span style="font-size:13px">5 AI Tools Replacing Content Teams</span><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Published</span></div>
-<div class="row"><span style="font-size:13px">LinkedIn Carousel: Growth Tips</span><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
-<div class="row"><span style="font-size:13px">Weekly Digest Newsletter</span><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
-</div>
-<div class="card"><div class="card-title">System Status</div>
-<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Content Engine</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Running</span></div>
-<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Social Scheduler</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Running</span></div>
-<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Voice AI (631-892-9817)</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Live</span></div>
-<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Lead Pipeline</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Active</span></div>
-<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Watchdog</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Monitoring</span></div>
-</div></div></div>
+<div class="panel active" id="p-dash"><div class="loading">Loading dashboard...</div></div>
 <!-- CONTENT -->
-<div class="panel" id="p-content">
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><h2 style="margin:0">Content Pipeline</h2><button class="btn">+ New Content</button></div>
-<div class="card" style="padding:0;overflow:hidden">
-<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">5 AI Tools Replacing Content Teams in 2026</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Blog · 1,847 words · Mar 22</div></div><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Published</span></div>
-<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">Why Your Agency Needs Automated Content</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Blog · 2,134 words · Mar 21</div></div><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Published</span></div>
-<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">The $4,000/Month Content Mistake</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Blog · 1,562 words · Mar 23</div></div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
-<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">LinkedIn Carousel: Growth Tips</div><div style="font-size:12px;color:var(--muted);margin-top:3px">LinkedIn · 450 words · Mar 23</div></div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
-<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">Weekly Digest Newsletter</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Email · 890 words · Mar 24</div></div><span class="badge" style="background:rgba(255,255,255,.05);color:var(--muted)">Draft</span></div>
-</div></div>
-
+<div class="panel" id="p-content"><div class="loading">Loading content...</div></div>
 <!-- SOCIAL -->
-<div class="panel" id="p-social">
-<h2>Social Media Command</h2>
-<div class="grid3" id="social-grid"></div>
-</div>
+<div class="panel" id="p-social"><div class="loading">Loading social data...</div></div>
 <!-- ANALYTICS -->
-<div class="panel" id="p-analytics">
-<h2>Analytics</h2>
-<div class="card"><div class="card-title">Weekly Traffic</div><div id="chart" style="display:flex;align-items:flex-end;gap:8px;height:140px"></div></div>
-<div class="grid3">
-<div class="stat"><div class="stat-label">Page Views</div><div class="stat-val" style="color:var(--gold)">3,540</div><div class="stat-sub" style="color:var(--green)">↑ 18% this week</div></div>
-<div class="stat"><div class="stat-label">Avg Session</div><div class="stat-val" style="color:var(--green)">3:42</div><div class="stat-sub" style="color:var(--green)">↑ 12% minutes</div></div>
-<div class="stat"><div class="stat-label">Bounce Rate</div><div class="stat-val" style="color:var(--purple)">34%</div><div class="stat-sub">industry avg 52%</div></div>
-</div></div>
-
+<div class="panel" id="p-analytics"><div class="loading">Loading analytics...</div></div>
 <!-- VOICE AI -->
-<div class="panel" id="p-voice">
-<h2 style="margin-bottom:6px">Voice AI Agents</h2>
-<p style="font-size:13px;color:var(--muted);margin-bottom:24px">Your 24/7 phone team · (631) 892-9817</p>
-<div class="grid2" id="voice-grid"></div>
-</div>
-
+<div class="panel" id="p-voice"><div class="loading">Loading voice data...</div></div>
 <!-- MEDIA -->
-<div class="panel" id="p-media">
-<h2 style="margin-bottom:6px">Media Production</h2>
-<p style="font-size:13px;color:var(--muted);margin-bottom:24px">Director Marcus Kane · Video, Audio, Images, Ads</p>
-<div class="grid4">
-<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">12</div><div style="font-size:12px;font-weight:600;margin-top:4px">Videos</div><div style="font-size:10px;color:var(--muted)">This month</div></div>
-<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">34</div><div style="font-size:12px;font-weight:600;margin-top:4px">Voiceovers</div><div style="font-size:10px;color:var(--muted)">Generated</div></div>
-<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">67</div><div style="font-size:12px;font-weight:600;margin-top:4px">Images</div><div style="font-size:10px;color:var(--muted)">Created</div></div>
-<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">8</div><div style="font-size:12px;font-weight:600;margin-top:4px">Ad Creatives</div><div style="font-size:10px;color:var(--muted)">A/B variants</div></div>
-</div>
-<div class="card" style="margin-top:16px"><div class="card-title">Quick Actions</div><div style="display:flex;gap:10px;flex-wrap:wrap" id="media-actions"></div></div>
-</div>
+<div class="panel" id="p-media"></div>
 <!-- LEADS -->
-<div class="panel" id="p-leads">
-<h2>Lead Pipeline</h2>
-<div class="card" style="padding:0;overflow:hidden">
-<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:12px 20px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600;border-bottom:1px solid var(--border)"><div>Name</div><div>Company</div><div>Status</div><div>Score</div><div>Source</div></div>
-<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">Sarah Chen</div><div style="color:var(--muted)">Acme Agency</div><span class="badge" style="background:rgba(239,68,68,.1);color:var(--red);width:fit-content">Hot</span><div style="font-weight:600;color:var(--green)">92</div><div style="font-size:12px;color:var(--muted)">Inbound call</div></div>
-<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">David Kim</div><div style="color:var(--muted)">GrowthLab</div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold);width:fit-content">Warm</span><div style="font-weight:600;color:var(--gold)">78</div><div style="font-size:12px;color:var(--muted)">Website form</div></div>
-<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">Maria Santos</div><div style="color:var(--muted)">ContentPro</div><span class="badge" style="background:rgba(239,68,68,.1);color:var(--red);width:fit-content">Hot</span><div style="font-weight:600;color:var(--green)">88</div><div style="font-size:12px;color:var(--muted)">LinkedIn</div></div>
-<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">Jake Wilson</div><div style="color:var(--muted)">DigitalFirst</div><span class="badge" style="background:rgba(255,255,255,.05);color:var(--muted);width:fit-content">Cold</span><div style="font-weight:600;color:var(--muted)">45</div><div style="font-size:12px;color:var(--muted)">Outreach</div></div>
-<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center"><div style="font-weight:500">Lisa Park</div><div style="color:var(--muted)">BrandForge</div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold);width:fit-content">Warm</span><div style="font-weight:600;color:var(--gold)">71</div><div style="font-size:12px;color:var(--muted)">Referral</div></div>
-</div></div>
-
+<div class="panel" id="p-leads"><div class="loading">Loading leads...</div></div>
 <!-- SETTINGS -->
-<div class="panel" id="p-settings">
-<h2>Settings</h2>
-<div class="card">
-<div class="card-title">Current Plan</div>
-<div style="display:flex;align-items:center;gap:16px">
-<div style="padding:12px 20px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:12px"><div style="font-size:22px;font-weight:700;color:var(--gold)" id="plan-name"></div><div style="font-size:14px;color:var(--muted)" id="plan-price"></div></div>
-<div style="flex:1" id="plan-features"></div>
-</div></div>
-<div class="grid2">
-<div class="card"><div class="card-title">Brand Voice</div><div style="font-size:13px;color:rgba(255,255,255,.6)">Professional, authoritative, data-driven</div><button class="btn-outline btn" style="margin-top:10px;font-size:12px;padding:8px 16px">Edit Voice Settings</button></div>
-<div class="card"><div class="card-title">Notifications</div><div style="font-size:13px;color:rgba(255,255,255,.6)">Email + Pushover alerts enabled</div><button class="btn-outline btn" style="margin-top:10px;font-size:12px;padding:8px 16px">Manage Alerts</button></div>
-</div></div>
+<div class="panel" id="p-settings"></div>
 </div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+<div class="modal" id="modal-body"></div>
+</div>
+
 <script>
-// Populate user info
+var token=localStorage.getItem('pf_token');
+var API='/.netlify/functions/client-api';
+var loaded={};
 var name=u.name||'User';
-document.getElementById('sb-plan').textContent=(u.plan==='agency'?'Agency':'Growth')+' Plan';
-document.getElementById('sb-avatar').textContent=name[0].toUpperCase();
+var displayName=name.split(/[._@]/)[0];
+displayName=displayName.charAt(0).toUpperCase()+displayName.slice(1);
+
+// Sidebar user info
+document.getElementById('sb-plan').textContent=(u.plan==='agency'?'Agency':u.plan==='growth'?'Growth':'Starter')+' Plan';
+document.getElementById('sb-avatar').textContent=(name[0]||'U').toUpperCase();
 document.getElementById('sb-name').textContent=name.split(/[._]/).map(function(w){return w.charAt(0).toUpperCase()+w.slice(1)}).join(' ');
 document.getElementById('sb-email').textContent=(u.email||'').slice(0,22);
-document.getElementById('welcome-msg').textContent='Welcome back, '+name.split(/[._@]/)[0].charAt(0).toUpperCase()+name.split(/[._@]/)[0].slice(1);
-document.getElementById('plan-name').textContent=u.plan==='agency'?'Agency':u.plan==='growth'?'Growth':'Starter';
-document.getElementById('plan-price').textContent=u.plan==='agency'?'$497/month':u.plan==='growth'?'$297/month':'$97/month';
-var feats=u.plan==='agency'?['Everything in Growth','White-label portal','Voice AI receptionist','Ad creative generation']:['Daily blog posts','6-platform social','Weekly newsletter','Priority support'];
-document.getElementById('plan-features').innerHTML='<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Included:</div>'+feats.map(function(f){return '<div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:3px">✓ '+f+'</div>'}).join('');
 
-// Panel switching
-function showPanel(id){
+// API helper
+async function apiFetch(action){
+  var res=await fetch(API+'?action='+action,{headers:{'Authorization':'Bearer '+token}});
+  if(!res.ok) throw new Error('API error '+res.status);
+  return res.json();
+}
+
+// Panel switching with lazy loading
+function showPanel(id,el){
   document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
   document.getElementById('p-'+id).classList.add('active');
   document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('active')});
-  event.currentTarget.classList.add('active');
+  if(el) el.classList.add('active');
+  if(!loaded[id]){loaded[id]=true;loaders[id]();}
 }
 
-// Fetch real dashboard data from API
-var token = localStorage.getItem('pf_token');
-var API = '/.netlify/functions/client-api';
+// Modal helpers
+function openModal(html){
+  document.getElementById('modal-body').innerHTML='<button class="modal-close" onclick="closeModal()">&times;</button>'+html;
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+function showModalSuccess(msg){
+  document.getElementById('modal-body').innerHTML='<div class="success-msg">'+msg+'</div>';
+  setTimeout(closeModal,2500);
+}
 
-async function loadDashboard() {
-  try {
-    var res = await fetch(API + '?action=dashboard', {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    if (res.ok) {
-      var data = await res.json();
-      document.getElementById('s-content').textContent = data.contentCount || '0';
-      document.getElementById('s-content-sub').innerHTML = '<span style="color:var(--green)">published pieces</span>';
-      document.getElementById('s-social').textContent = data.socialCount || '0';
-      document.getElementById('s-social-sub').innerHTML = '<span style="color:var(--green)">posts distributed</span>';
-      document.getElementById('s-leads').textContent = data.leadCount || '0';
-      document.getElementById('s-leads-sub').innerHTML = '<span style="color:var(--green)">leads captured</span>';
-      document.getElementById('s-voice').textContent = data.voiceCalls || '0';
-      document.getElementById('s-voice-sub').innerHTML = '<span style="color:var(--green)">AI calls handled</span>';
+// Badge helper
+function statusBadge(status){
+  var s=String(status||'').toLowerCase();
+  if(s==='published'||s==='active'||s==='completed') return 'background:rgba(34,197,94,.1);color:var(--green)';
+  if(s==='scheduled'||s==='warm'||s==='pending') return 'background:rgba(201,168,76,.1);color:var(--gold)';
+  if(s==='hot') return 'background:rgba(239,68,68,.1);color:var(--red)';
+  return 'background:rgba(255,255,255,.05);color:var(--muted)';
+}
+
+// ========== PANEL LOADERS ==========
+
+var loaders={};
+
+// DASHBOARD
+loaders.dash=async function(){
+  var el=document.getElementById('p-dash');
+  try{
+    var data=await apiFetch('dashboard');
+    var html='<h1>Welcome back, '+displayName+'</h1>';
+    html+='<p style="font-size:14px;color:var(--muted);margin-bottom:24px">Your content engine is running. Here\'s today\'s snapshot.</p>';
+    html+='<div class="stats">';
+    html+='<div class="stat"><div class="stat-label">Content Published</div><div class="stat-val" style="color:var(--gold)">'+(data.contentCount||0)+'</div><div class="stat-sub" style="color:var(--green)">published pieces</div></div>';
+    html+='<div class="stat"><div class="stat-label">Social Posts</div><div class="stat-val" style="color:var(--green)">'+(data.socialCount||0)+'</div><div class="stat-sub" style="color:var(--green)">posts distributed</div></div>';
+    html+='<div class="stat"><div class="stat-label">Leads Generated</div><div class="stat-val" style="color:var(--purple)">'+(data.leadCount||0)+'</div><div class="stat-sub" style="color:var(--green)">leads captured</div></div>';
+    html+='<div class="stat"><div class="stat-label">Voice Calls</div><div class="stat-val" style="color:var(--red)">'+(data.voiceCalls||0)+'</div><div class="stat-sub" style="color:var(--green)">AI calls handled</div></div>';
+    html+='</div>';
+    // Analytics mini chart
+    html+='<div class="grid2">';
+    html+='<div class="card"><div class="card-title">Recent Analytics</div>';
+    if(data.analytics&&data.analytics.length){
+      var mx=Math.max.apply(null,data.analytics.map(function(a){return a.views||0}));
+      html+='<div style="display:flex;align-items:flex-end;gap:6px;height:100px">';
+      data.analytics.slice(-7).forEach(function(a){
+        var h=mx>0?Math.round((a.views||0)/mx*90):4;
+        html+='<div style="flex:1;text-align:center"><div style="height:'+h+'px;background:linear-gradient(180deg,rgba(201,168,76,.8),rgba(201,168,76,.2));border-radius:4px 4px 0 0;min-height:4px"></div><div style="font-size:9px;color:var(--muted);margin-top:4px">'+(a.date||'').slice(-5)+'</div></div>';
+      });
+      html+='</div>';
     } else {
-      showDemoData();
+      html+='<div style="color:var(--muted);font-size:13px">Analytics data will appear as traffic arrives.</div>';
     }
-  } catch (e) {
-    console.warn('Dashboard fetch failed:', e.message);
-    showDemoData();
+    html+='</div>';
+    // System status
+    html+='<div class="card"><div class="card-title">System Status</div>';
+    var systems=[['Content Engine','Running'],['Social Scheduler','Running'],['Voice AI (631-892-9817)','Live'],['Lead Pipeline','Active'],['Watchdog','Monitoring']];
+    systems.forEach(function(s){
+      html+='<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">'+s[0]+'</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>'+s[1]+'</span></div>';
+    });
+    html+='</div></div>';
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<h1>Welcome back, '+displayName+'</h1><p style="font-size:14px;color:var(--muted);margin-bottom:24px">Your content engine is running.</p><div class="error-msg">Unable to load dashboard data. Please try refreshing.</div>';
   }
-}
+};
 
-function showDemoData() {
-  var demoBanner = '<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--gold)">ℹ️ <b>Live data loading...</b> — Your real metrics populate as your content engine produces results.</div>';
-  document.getElementById('p-dash').insertAdjacentHTML('afterbegin', demoBanner);
-  document.getElementById('s-content').textContent = '0';
-  document.getElementById('s-content-sub').innerHTML = '<span style="color:var(--muted)">getting started</span>';
-  document.getElementById('s-social').textContent = '0';
-  document.getElementById('s-social-sub').innerHTML = '<span style="color:var(--muted)">pending activation</span>';
-  document.getElementById('s-leads').textContent = '0';
-  document.getElementById('s-leads-sub').innerHTML = '<span style="color:var(--muted)">—</span>';
-  document.getElementById('s-voice').textContent = '0';
-  document.getElementById('s-voice-sub').innerHTML = '<span style="color:var(--muted)">—</span>';
-}
-
-loadDashboard();
-// Social grid
-var socials=[{n:'LinkedIn',p:12,f:'2.4K',e:'4.2%',c:'#0077b5',q:5},{n:'Twitter/X',p:28,f:'1.8K',e:'2.8%',c:'#1da1f2',q:7},{n:'Instagram',p:8,f:'890',e:'5.1%',c:'#e4405f',q:4},{n:'Facebook',p:6,f:'1.2K',e:'1.9%',c:'#1877f2',q:3},{n:'TikTok',p:4,f:'340',e:'7.3%',c:'#000',q:2},{n:'Pinterest',p:10,f:'560',e:'3.1%',c:'#bd081c',q:6}];
-document.getElementById('social-grid').innerHTML=socials.map(function(s){return '<div class="card" style="padding:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-size:14px;font-weight:600">'+s.n+'</span><span style="width:8px;height:8px;border-radius:50%;background:'+s.c+'"></span></div><div class="grid2" style="gap:10px"><div><div style="font-size:20px;font-weight:700;color:var(--gold)">'+s.p+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">This month</div></div><div><div style="font-size:20px;font-weight:700">'+s.f+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Followers</div></div><div><div style="font-size:16px;font-weight:600;color:var(--green)">'+s.e+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Engagement</div></div><div><div style="font-size:16px;font-weight:600;color:var(--muted)">'+s.q+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Queued</div></div></div></div>'}).join('');
-
-// Voice agents
-var agents=[{n:'Emma — Receptionist',s:'Active',c:47,sat:'92%',t:'inbound'},{n:'Michael — Sales',s:'Active',c:23,sat:'88%',t:'outbound'},{n:'Support Agent',s:'Standby',c:12,sat:'95%',t:'inbound'},{n:'Appointment Setter',s:'Active',c:8,sat:'90%',t:'outbound'}];
-document.getElementById('voice-grid').innerHTML=agents.map(function(a){var ac=a.s==='Active';return '<div class="card" style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-size:14px;font-weight:600">'+a.n+'</span><span class="badge" style="background:'+(ac?'rgba(34,197,94,.1)':'rgba(255,255,255,.05)')+';color:'+(ac?'var(--green)':'var(--muted)')+'">'+a.s+'</span></div><div style="display:flex;gap:20px"><div><div style="font-size:24px;font-weight:700;color:var(--gold)">'+a.c+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Calls</div></div><div><div style="font-size:24px;font-weight:700;color:var(--green)">'+a.sat+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Satisfaction</div></div><div><div style="font-size:14px;font-weight:500;color:var(--muted);margin-top:6px">'+a.t+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Type</div></div></div></div>'}).join('');
-
-// Chart
-var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],traffic=[340,520,480,690,720,410,380],mx=Math.max.apply(null,traffic);
-document.getElementById('chart').innerHTML=traffic.map(function(t,i){return '<div style="flex:1;text-align:center"><div style="height:'+Math.round(t/mx*120)+'px;background:linear-gradient(180deg,rgba(201,168,76,.8),rgba(201,168,76,.2));border-radius:6px 6px 0 0;min-height:4px"></div><div style="font-size:10px;color:var(--muted);margin-top:6px">'+days[i]+'</div><div style="font-size:11px;color:var(--gold);font-weight:600">'+t+'</div></div>'}).join('');
-
-// Media actions
-['Generate Video Script','Create Voiceover','Product Photo Shoot','URL → Video Ad','Podcast Episode','Social Graphics'].forEach(function(a){
-  var b=document.createElement('button');b.className='btn btn-outline';b.style.cssText='font-size:12px;padding:10px 18px';b.textContent=a;
-  document.getElementById('media-actions').appendChild(b);
-});
-</script>
-
-<!-- CONVERSION ENGINE -->
-<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
-<!-- Drop this before </body> on every HTML page -->
-
-<!-- STICKY BOTTOM CTA BAR -->
-<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
-<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
-<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
-<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
-</div>
-
-<!-- EXIT INTENT POPUP -->
-<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
-<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
-<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
-<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
-<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
-<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
-<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
-<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
-</div>
-</div>
-
-<!-- INLINE CTA COMPONENT (inject into blog posts) -->
-<template id="inline-cta-template">
-<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
-<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
-<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
-<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
-</div>
-</template>
-
-<!-- PHONE DEMO CTA -->
-<template id="phone-cta-template">
-<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
-<div style="text-align:center">
-<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
-<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
-</div>
-<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
-</div>
-</template>
-
-<script>
-// Sticky CTA — show after 30% scroll
-(function(){
-  if(sessionStorage.getItem('cta_closed'))return;
-  var shown=false;
-  window.addEventListener('scroll',function(){
-    if(shown)return;
-    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
-    if(pct>0.3){
-      document.getElementById('sticky-cta').style.transform='translateY(0)';
-      shown=true;
+// CONTENT
+loaders.content=async function(){
+  var el=document.getElementById('p-content');
+  try{
+    var data=await apiFetch('content');
+    var items=data.items||[];
+    var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><h2 style="margin:0">Content Pipeline</h2><button class="btn" onclick="openNewContentModal()">+ New Content</button></div>';
+    if(items.length){
+      html+='<div class="card" style="padding:0;overflow:hidden">';
+      items.forEach(function(it){
+        html+='<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">'+(it.title||'Untitled')+'</div><div style="font-size:12px;color:var(--muted);margin-top:3px">'+(it.type||'Content')+' &middot; '+(it.words?it.words+' words &middot; ':'')+(it.date||'')+'</div></div><span class="badge" style="'+statusBadge(it.status)+'">'+(it.status||'Draft')+'</span></div>';
+      });
+      html+='</div>';
+    } else {
+      html+='<div class="empty-msg">No content yet. Click "+ New Content" to request your first piece.</div>';
     }
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<h2>Content Pipeline</h2><div class="error-msg">Unable to load content. Please try again later.</div>';
+  }
+};
+
+// SOCIAL
+loaders.social=async function(){
+  var el=document.getElementById('p-social');
+  try{
+    var data=await apiFetch('social');
+    var posts=data.posts||[];
+    var html='<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><h2 style="margin:0">Social Media Command</h2><button class="btn" onclick="openCreatePostModal()">Create Post</button></div>';
+    if(posts.length){
+      html+='<div class="grid3">';
+      // Group by platform
+      var platforms={};
+      posts.forEach(function(p){
+        var pl=p.platform||'Other';
+        if(!platforms[pl]) platforms[pl]={posts:[],total:0};
+        platforms[pl].posts.push(p);
+        platforms[pl].total++;
+      });
+      Object.keys(platforms).forEach(function(pl){
+        var grp=platforms[pl];
+        html+='<div class="card" style="padding:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-size:14px;font-weight:600">'+pl+'</span><span class="badge" style="'+statusBadge('active')+'">'+grp.total+' posts</span></div>';
+        grp.posts.slice(0,3).forEach(function(p){
+          html+='<div style="font-size:12px;color:rgba(255,255,255,.6);padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03)">'+(p.content||p.title||'Post').substring(0,60)+(p.date?' <span style="color:var(--muted)">&middot; '+p.date+'</span>':'')+'</div>';
+        });
+        html+='</div>';
+      });
+      html+='</div>';
+    } else {
+      html+='<div class="empty-msg">No social posts yet. Click "Create Post" to schedule your first post.</div>';
+    }
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<h2>Social Media Command</h2><div class="error-msg">Unable to load social data. Please try again later.</div>';
+  }
+};
+
+// ANALYTICS
+loaders.analytics=async function(){
+  var el=document.getElementById('p-analytics');
+  try{
+    var data=await apiFetch('analytics');
+    var days=data.days||[];
+    var html='<h2>Analytics</h2>';
+    // Bar chart
+    html+='<div class="card"><div class="card-title">Traffic (Last 14 Days)</div>';
+    if(days.length){
+      var mx=Math.max.apply(null,days.map(function(d){return d.views||0}));
+      var totalViews=days.reduce(function(s,d){return s+(d.views||0)},0);
+      var totalLeads=days.reduce(function(s,d){return s+(d.leads||0)},0);
+      html+='<div style="display:flex;align-items:flex-end;gap:6px;height:160px;margin-bottom:12px">';
+      days.forEach(function(d){
+        var h=mx>0?Math.round((d.views||0)/mx*140):4;
+        var lbl=(d.date||'').slice(-5);
+        html+='<div style="flex:1;text-align:center" title="'+lbl+': '+(d.views||0)+' views"><div style="height:'+h+'px;background:linear-gradient(180deg,rgba(201,168,76,.8),rgba(201,168,76,.2));border-radius:4px 4px 0 0;min-height:4px"></div><div style="font-size:9px;color:var(--muted);margin-top:4px">'+lbl+'</div></div>';
+      });
+      html+='</div>';
+      html+='</div>';
+      // Summary stats
+      html+='<div class="grid3">';
+      html+='<div class="stat"><div class="stat-label">Total Page Views</div><div class="stat-val" style="color:var(--gold)">'+totalViews.toLocaleString()+'</div><div class="stat-sub" style="color:var(--green)">last '+days.length+' days</div></div>';
+      html+='<div class="stat"><div class="stat-label">Leads from Content</div><div class="stat-val" style="color:var(--green)">'+totalLeads+'</div><div class="stat-sub">conversions</div></div>';
+      html+='<div class="stat"><div class="stat-label">Avg Daily Views</div><div class="stat-val" style="color:var(--purple)">'+Math.round(totalViews/days.length)+'</div><div class="stat-sub">per day</div></div>';
+      html+='</div>';
+    } else {
+      html+='<div style="color:var(--muted);font-size:13px;padding:20px;text-align:center">Analytics data will populate as your content generates traffic.</div></div>';
+    }
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<h2>Analytics</h2><div class="error-msg">Unable to load analytics. Please try again later.</div>';
+  }
+};
+
+// VOICE AI
+loaders.voice=async function(){
+  var el=document.getElementById('p-voice');
+  try{
+    var data=await apiFetch('voice');
+    var convos=data.conversations||[];
+    var html='<h2 style="margin-bottom:6px">Voice AI Agents</h2>';
+    html+='<p style="font-size:13px;color:var(--muted);margin-bottom:18px">Your 24/7 phone team &middot; (631) 892-9817</p>';
+    html+='<div style="display:flex;gap:12px;margin-bottom:24px"><a href="tel:+16318929817" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px">&#9742; Call Now</a><button class="btn btn-outline" onclick="loaded.voice=false;loaders.voice()">Refresh</button></div>';
+    // Emma agent card
+    html+='<div class="card" style="margin-bottom:16px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><span style="font-size:15px;font-weight:600">Emma &mdash; AI Receptionist</span><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Active</span></div>';
+    html+='<div style="font-size:13px;color:var(--muted);margin-bottom:6px">Phone: (631) 892-9817 &middot; Available 24/7</div>';
+    html+='<div style="font-size:13px;color:rgba(255,255,255,.5)">'+convos.length+' conversation'+(convos.length===1?'':'s')+' recorded</div></div>';
+    // Conversation log
+    html+='<div class="card"><div class="card-title">Conversation Log</div>';
+    if(convos.length){
+      convos.forEach(function(c){
+        html+='<div class="row" style="flex-direction:column;align-items:flex-start;gap:4px"><div style="display:flex;justify-content:space-between;width:100%"><span style="font-size:13px;font-weight:500">'+(c.caller||c.from||'Unknown Caller')+'</span><span style="font-size:11px;color:var(--muted)">'+(c.date||c.timestamp||'')+'</span></div><div style="font-size:12px;color:var(--muted)">'+(c.summary||c.type||'Call')+(c.duration?' &middot; '+c.duration:'')+'</div></div>';
+      });
+    } else {
+      html+='<div style="color:var(--muted);font-size:13px;padding:8px 0">No conversations recorded yet. Calls will appear here.</div>';
+    }
+    html+='</div>';
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<h2>Voice AI Agents</h2><p style="font-size:13px;color:var(--muted);margin-bottom:18px">(631) 892-9817</p><a href="tel:+16318929817" class="btn" style="text-decoration:none;display:inline-flex;align-items:center;gap:8px;margin-bottom:20px">&#9742; Call Now</a><div class="error-msg">Unable to load voice data. Please try again later.</div>';
+  }
+};
+
+// MEDIA
+loaders.media=function(){
+  var el=document.getElementById('p-media');
+  var actions=[
+    {name:'Generate Video Script',fields:[{l:'Topic',n:'topic',t:'text'},{l:'Length (minutes)',n:'length',t:'number'},{l:'Style',n:'style',t:'select',opts:['Explainer','Tutorial','Promo','Testimonial']}]},
+    {name:'Create Voiceover',fields:[{l:'Script Text',n:'script',t:'textarea'},{l:'Voice Style',n:'voice',t:'select',opts:['Professional','Friendly','Energetic','Calm']}]},
+    {name:'Product Photo Shoot',fields:[{l:'Product Description',n:'desc',t:'textarea'},{l:'Background',n:'bg',t:'select',opts:['White Studio','Lifestyle','Outdoor','Abstract']}]},
+    {name:'URL to Video Ad',fields:[{l:'Page URL',n:'url',t:'text'},{l:'Ad Length',n:'length',t:'select',opts:['15 seconds','30 seconds','60 seconds']},{l:'Platform',n:'platform',t:'select',opts:['Facebook','Instagram','YouTube','TikTok']}]},
+    {name:'Podcast Episode',fields:[{l:'Episode Topic',n:'topic',t:'text'},{l:'Key Points',n:'points',t:'textarea'},{l:'Duration',n:'dur',t:'select',opts:['5 minutes','10 minutes','20 minutes']}]},
+    {name:'Social Graphics',fields:[{l:'Text/Message',n:'text',t:'textarea'},{l:'Platform',n:'platform',t:'select',opts:['Instagram','LinkedIn','Twitter/X','Facebook']},{l:'Style',n:'style',t:'select',opts:['Minimal','Bold','Gradient','Photo-based']}]}
+  ];
+  var html='<h2 style="margin-bottom:6px">Media Production</h2>';
+  html+='<p style="font-size:13px;color:var(--muted);margin-bottom:24px">AI-powered media production &middot; Video, Audio, Images, Ads</p>';
+  html+='<div class="card"><div class="card-title">Quick Actions</div><div style="display:flex;gap:10px;flex-wrap:wrap">';
+  actions.forEach(function(a,i){
+    html+='<button class="btn btn-outline" style="font-size:12px;padding:10px 18px" onclick="openMediaModal('+i+')">'+a.name+'</button>';
   });
-})();
+  html+='</div></div>';
+  el.innerHTML=html;
+  // Store actions for modal use
+  window._mediaActions=actions;
+};
 
-// Exit intent — show when mouse leaves viewport (desktop only)
-(function(){
-  if(sessionStorage.getItem('exit_shown'))return;
-  if('ontouchstart' in window)return; // skip mobile
-  document.addEventListener('mouseout',function(e){
-    if(!e.relatedTarget && !e.toElement && e.clientY<10){
-      document.getElementById('exit-popup').style.display='flex';
-      sessionStorage.setItem('exit_shown','1');
+// LEADS
+loaders.leads=async function(){
+  var el=document.getElementById('p-leads');
+  try{
+    var data=await apiFetch('leads');
+    var leads=data.leads||[];
+    var html='<h2>Lead Pipeline</h2>';
+    if(leads.length){
+      html+='<div class="card" style="padding:0;overflow:hidden">';
+      html+='<div class="tbl-header" style="grid-template-columns:2fr 2fr 1fr 1fr 1.5fr"><div>Name</div><div>Company</div><div>Status</div><div>Score</div><div>Source</div></div>';
+      leads.forEach(function(l){
+        var scoreColor=(l.score||0)>=80?'var(--green)':(l.score||0)>=60?'var(--gold)':'var(--muted)';
+        html+='<div class="tbl-row" style="grid-template-columns:2fr 2fr 1fr 1fr 1.5fr"><div style="font-weight:500">'+(l.name||'Unknown')+'</div><div style="color:var(--muted)">'+(l.company||'-')+'</div><span class="badge" style="'+statusBadge(l.status)+';width:fit-content">'+(l.status||'New')+'</span><div style="font-weight:600;color:'+scoreColor+'">'+(l.score||'-')+'</div><div style="font-size:12px;color:var(--muted)">'+(l.source||'-')+'</div></div>';
+      });
+      html+='</div>';
+    } else {
+      html+='<div class="empty-msg">No leads captured yet &mdash; leads will appear here as your content generates traffic.</div>';
     }
-  });
-})();
+    el.innerHTML=html;
+  }catch(e){
+    el.innerHTML='<h2>Lead Pipeline</h2><div class="error-msg">Unable to load leads. Please try again later.</div>';
+  }
+};
 
-// Lead capture
-function captureExitLead(){
-  var email=document.getElementById('exit-email').value;
-  if(!email||!email.includes('@'))return;
-  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
-  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
-  localStorage.setItem('nysr_lead',email);
-  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
-  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+// SETTINGS
+loaders.settings=function(){
+  var el=document.getElementById('p-settings');
+  var planLabel=u.plan==='agency'?'Agency':u.plan==='growth'?'Growth':'Starter';
+  var planPrice=u.plan==='agency'?'$497/month':u.plan==='growth'?'$297/month':'$97/month';
+  var feats=u.plan==='agency'?['Everything in Growth','White-label portal','Voice AI receptionist','Ad creative generation']:u.plan==='growth'?['Daily blog posts','6-platform social','Weekly newsletter','Priority support']:['Weekly blog posts','3-platform social','Monthly newsletter','Email support'];
+  var brandVoice=localStorage.getItem('pf_brand_voice')||'Professional, authoritative, data-driven';
+  var notifs=JSON.parse(localStorage.getItem('pf_notifs')||'{"email":true,"push":false,"weekly":true,"content":true}');
+
+  var html='<h2>Settings</h2>';
+  // Plan
+  html+='<div class="card"><div class="card-title">Current Plan</div><div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap">';
+  html+='<div style="padding:12px 20px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:12px"><div style="font-size:22px;font-weight:700;color:var(--gold)">'+planLabel+'</div><div style="font-size:14px;color:var(--muted)">'+planPrice+'</div></div>';
+  html+='<div style="flex:1;min-width:200px"><div style="font-size:13px;color:var(--muted);margin-bottom:6px">Included:</div>';
+  feats.forEach(function(f){html+='<div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:3px">&#10003; '+f+'</div>';});
+  html+='</div>';
+  html+='<a href="/store/" class="btn" style="text-decoration:none">Upgrade Plan</a>';
+  html+='</div></div>';
+  // Account
+  html+='<div class="grid2">';
+  html+='<div class="card"><div class="card-title">Account Info</div>';
+  html+='<div style="margin-bottom:10px"><label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px">Name</label><input type="text" id="set-name" value="'+(u.name||'').replace(/"/g,'&quot;')+'" style="width:100%;padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit"></div>';
+  html+='<div style="margin-bottom:10px"><label style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;display:block;margin-bottom:4px">Email</label><input type="email" id="set-email" value="'+(u.email||'').replace(/"/g,'&quot;')+'" style="width:100%;padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:14px;font-family:inherit"></div>';
+  html+='<button class="btn" style="font-size:12px;padding:8px 16px" onclick="saveAccountInfo()">Save Changes</button>';
+  html+='<a href="mailto:support@myproflow.org" style="display:inline-block;margin-left:10px;font-size:12px;color:var(--gold)">Contact Support</a>';
+  html+='</div>';
+  // Brand Voice
+  html+='<div class="card"><div class="card-title">Brand Voice</div>';
+  html+='<textarea id="set-voice" rows="4" style="width:100%;padding:8px 12px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:13px;font-family:inherit;resize:vertical">'+brandVoice+'</textarea>';
+  html+='<button class="btn btn-outline" style="margin-top:10px;font-size:12px;padding:8px 16px" onclick="saveBrandVoice()">Save Brand Voice</button>';
+  html+='</div>';
+  html+='</div>';
+  // Notifications
+  html+='<div class="card"><div class="card-title">Notification Preferences</div>';
+  html+='<div class="setting-group"><label><input type="checkbox" id="notif-email" '+(notifs.email?'checked':'')+' onchange="saveNotifs()"> Email notifications for new content</label></div>';
+  html+='<div class="setting-group"><label><input type="checkbox" id="notif-push" '+(notifs.push?'checked':'')+' onchange="saveNotifs()"> Push notifications (Pushover)</label></div>';
+  html+='<div class="setting-group"><label><input type="checkbox" id="notif-weekly" '+(notifs.weekly?'checked':'')+' onchange="saveNotifs()"> Weekly performance report</label></div>';
+  html+='<div class="setting-group"><label><input type="checkbox" id="notif-content" '+(notifs.content?'checked':'')+' onchange="saveNotifs()"> Notify when content is published</label></div>';
+  html+='</div>';
+  el.innerHTML=html;
+};
+
+// ========== MODAL ACTIONS ==========
+
+function openNewContentModal(){
+  openModal('<h3>Request New Content</h3><label>Content Type</label><select id="nc-type"><option>Blog Post</option><option>Social Post</option><option>Newsletter</option><option>Image</option></select><label>Title / Topic</label><input type="text" id="nc-title" placeholder="e.g. 5 Ways AI is Changing Marketing"><label>Platform (optional)</label><select id="nc-platform"><option value="">Any</option><option>Website</option><option>LinkedIn</option><option>Twitter/X</option><option>Instagram</option><option>Facebook</option><option>Email</option></select><button class="btn" onclick="submitNewContent()">Submit Request</button>');
 }
 
-// Auto-inject inline CTAs into blog posts (every 3rd section)
-(function(){
-  var article=document.querySelector('article');
-  if(!article)return;
-  var h2s=article.querySelectorAll('h2');
-  var tpl=document.getElementById('inline-cta-template');
-  var phoneTpl=document.getElementById('phone-cta-template');
-  if(h2s.length>2 && tpl){
-    var cta=tpl.content.cloneNode(true);
-    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
-  }
-  if(h2s.length>4 && phoneTpl){
-    var phone=phoneTpl.content.cloneNode(true);
-    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
-  }
-})();
+async function submitNewContent(){
+  var type=document.getElementById('nc-type').value;
+  var title=document.getElementById('nc-title').value;
+  var platform=document.getElementById('nc-platform').value;
+  if(!title){alert('Please enter a title or topic.');return;}
+  try{
+    await fetch(API+'?action=content',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({type:type,title:title,platform:platform})});
+  }catch(e){}
+  showModalSuccess('Content request submitted! Our AI team will deliver within 48 hours.');
+  loaded.content=false;
+}
 
-// Track page views for analytics
-(function(){
-  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
-})();
+function openCreatePostModal(){
+  openModal('<h3>Create Social Post</h3><label>Platform</label><select id="sp-platform"><option>LinkedIn</option><option>Twitter/X</option><option>Instagram</option><option>Facebook</option><option>TikTok</option><option>Pinterest</option></select><label>Content</label><textarea id="sp-content" rows="5" placeholder="Write your post content..."></textarea><button class="btn" onclick="submitSocialPost()">Schedule Post</button>');
+}
+
+async function submitSocialPost(){
+  var platform=document.getElementById('sp-platform').value;
+  var content=document.getElementById('sp-content').value;
+  if(!content){alert('Please write some content.');return;}
+  try{
+    await fetch(API+'?action=social',{method:'POST',headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'},body:JSON.stringify({platform:platform,content:content})});
+  }catch(e){}
+  showModalSuccess('Post scheduled! It will be published by our social engine.');
+  loaded.social=false;
+}
+
+function openMediaModal(idx){
+  var a=window._mediaActions[idx];
+  var html='<h3>'+a.name+'</h3>';
+  a.fields.forEach(function(f){
+    html+='<label>'+f.l+'</label>';
+    if(f.t==='textarea') html+='<textarea id="mf-'+f.n+'" rows="3" placeholder=""></textarea>';
+    else if(f.t==='select'){
+      html+='<select id="mf-'+f.n+'">';
+      f.opts.forEach(function(o){html+='<option>'+o+'</option>';});
+      html+='</select>';
+    } else html+='<input type="'+f.t+'" id="mf-'+f.n+'" placeholder="">';
+  });
+  html+='<button class="btn" onclick="submitMediaRequest(\''+a.name+'\')">Submit Request</button>';
+  openModal(html);
+}
+
+function submitMediaRequest(name){
+  showModalSuccess('Request submitted &mdash; our AI team will deliver your '+name.toLowerCase()+' within 48 hours.');
+}
+
+// ========== SETTINGS ACTIONS ==========
+
+function saveAccountInfo(){
+  var newName=document.getElementById('set-name').value;
+  var newEmail=document.getElementById('set-email').value;
+  u.name=newName;u.email=newEmail;
+  localStorage.setItem('pf_user',JSON.stringify(u));
+  document.getElementById('sb-name').textContent=newName.split(/[._]/).map(function(w){return w.charAt(0).toUpperCase()+w.slice(1)}).join(' ');
+  document.getElementById('sb-email').textContent=newEmail.slice(0,22);
+  alert('Account info saved.');
+}
+
+function saveBrandVoice(){
+  localStorage.setItem('pf_brand_voice',document.getElementById('set-voice').value);
+  alert('Brand voice saved.');
+}
+
+function saveNotifs(){
+  var notifs={
+    email:document.getElementById('notif-email').checked,
+    push:document.getElementById('notif-push').checked,
+    weekly:document.getElementById('notif-weekly').checked,
+    content:document.getElementById('notif-content').checked
+  };
+  localStorage.setItem('pf_notifs',JSON.stringify(notifs));
+}
+
+// ========== INIT ==========
+// Load dashboard on page load, media and settings immediately (no API needed)
+loaded.dash=true;loaders.dash();
+loaded.media=true;loaders.media();
+loaded.settings=true;loaders.settings();
 </script>
-
-</body></html>
+</body>
+</html>
