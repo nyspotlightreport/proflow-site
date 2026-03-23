@@ -25,14 +25,28 @@ exports.handler = async (event) => {
     const valid = await bcrypt.compare(password, ADMIN_HASH);
     if (!valid) return error("Invalid credentials", 401);
 
+    // Look up admin in Supabase to get client_id for dashboard
+    let adminSub = undefined;
+    const SU = process.env.SUPABASE_URL;
+    const SK = process.env.SUPABASE_KEY;
+    if (SU && SK) {
+      try {
+        const r = await fetch(`${SU}/rest/v1/client_users?email=eq.${encodeURIComponent(email)}&select=id&limit=1`, {
+          headers: { apikey: SK, Authorization: `Bearer ${SK}` }, signal: AbortSignal.timeout(5000)
+        });
+        if (r.ok) { const u = await r.json(); if (u.length) adminSub = u[0].id; }
+      } catch (_) {}
+    }
+
     const token = signToken({
+      sub: adminSub,
       email,
       name: "S.C. Thomas",
       plan: "agency",
       role: "chairman",
     });
 
-    return success({ token, email, name: "S.C. Thomas", plan: "agency", role: "chairman" });
+    return success({ token, email, name: "S.C. Thomas", plan: "agency", role: "chairman", clientId: adminSub });
   }
 
   // Client login: check Supabase client_users table
