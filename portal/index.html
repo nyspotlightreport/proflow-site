@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProFlow Dashboard — Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0a0f;--card:rgba(255,255,255,.02);--border:rgba(255,255,255,.05);--text:#f7f5f0;--muted:rgba(255,255,255,.35);--gold:#c9a84c;--green:#22c55e;--purple:#6366f1;--red:#ef4444;--sans:'Outfit',system-ui,sans-serif;--serif:'Instrument Serif',Georgia,serif}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;display:flex}
+a{color:inherit;text-decoration:none}
+.sidebar{width:220px;background:var(--card);border-right:1px solid var(--border);display:flex;flex-direction:column;height:100vh;position:fixed;left:0;top:0}
+.sb-logo{padding:24px 20px 20px;border-bottom:1px solid var(--border);font-family:var(--serif);font-size:22px}
+.sb-logo span{color:var(--gold)}
+.sb-plan{font-size:10px;color:var(--muted);letter-spacing:.12em;text-transform:uppercase;margin-top:2px;font-family:var(--sans)}
+.sb-nav{flex:1;padding:12px 10px;overflow-y:auto}
+.sb-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-radius:10px;cursor:pointer;margin-bottom:2px;color:var(--muted);font-size:14px;transition:all .15s}
+.sb-item:hover{background:rgba(255,255,255,.03);color:var(--text)}
+.sb-item.active{background:rgba(201,168,76,.1);color:var(--gold);font-weight:600}
+.sb-item i{font-size:16px;width:20px;text-align:center;font-style:normal}
+</style>
+</head>
+<body>
+<script>
+// AUTH CHECK — verify token server-side before rendering portal
+(async function(){
+  var token=localStorage.getItem('pf_token');
+  if(!token){window.location.href='/login/';return;}
+  try{
+    var res=await fetch('/api/verify-token',{headers:{'Authorization':'Bearer '+token}});
+    if(!res.ok){localStorage.removeItem('pf_token');localStorage.removeItem('pf_user');window.location.href='/login/';return;}
+    var data=await res.json();
+    window._authUser=data;
+    localStorage.setItem('pf_user',JSON.stringify(data));
+  }catch(e){localStorage.removeItem('pf_token');window.location.href='/login/';return;}
+})();
+var u=JSON.parse(localStorage.getItem('pf_user')||'{}');
+</script>
+<style>
+.sb-user{padding:16px;border-top:1px solid var(--border)}
+.sb-avatar{width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--gold),#8b6914);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700}
+.sb-logout{width:100%;padding:8px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);border-radius:8px;color:var(--muted);font-size:12px;cursor:pointer;font-family:inherit;margin-top:12px}
+.main{margin-left:220px;flex:1;padding:28px 32px;overflow-y:auto;min-height:100vh}
+.panel{display:none}.panel.active{display:block}
+.stats{display:flex;gap:14px;margin-bottom:24px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px 22px;flex:1;min-width:180}
+.stat-label{font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.stat-val{font-size:32px;font-weight:700;line-height:1}
+.stat-sub{font-size:12px;margin-top:6px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px;margin-bottom:16px}
+.card-title{font-size:13px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.row:last-child{border-bottom:none}
+.badge{padding:4px 12px;border-radius:20px;font-size:11px;font-weight:600}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+.dot{width:6px;height:6px;border-radius:50%;display:inline-block;margin-right:6px}
+.btn{padding:10px 20px;background:linear-gradient(135deg,var(--gold),#b8963f);border:none;border-radius:10px;color:var(--bg);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit}
+.btn-outline{background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);color:var(--gold)}
+h1{font-size:24px;font-weight:600;margin-bottom:4px}
+h2{font-size:20px;font-weight:600;margin-bottom:24px}
+@media(max-width:768px){.sidebar{width:60px}.sb-logo span,.sb-plan,.sb-item span,.sb-user>div:last-child{display:none}.main{margin-left:60px}.stats,.grid2,.grid3,.grid4{grid-template-columns:1fr;display:flex;flex-direction:column}}
+</style>
+<div class="sidebar">
+<div class="sb-logo">Pro<span>Flow</span><div class="sb-plan" id="sb-plan"></div></div>
+<div class="sb-nav">
+<div class="sb-item active" onclick="showPanel('dash')"><i>◉</i><span>Dashboard</span></div>
+<div class="sb-item" onclick="showPanel('content')"><i>✎</i><span>Content</span></div>
+<div class="sb-item" onclick="showPanel('social')"><i>◈</i><span>Social</span></div>
+<div class="sb-item" onclick="showPanel('analytics')"><i>◊</i><span>Analytics</span></div>
+<div class="sb-item" onclick="showPanel('voice')"><i>☎</i><span>Voice AI</span></div>
+<div class="sb-item" onclick="showPanel('media')"><i>▶</i><span>Media</span></div>
+<div class="sb-item" onclick="showPanel('leads')"><i>◎</i><span>Leads</span></div>
+<div class="sb-item" onclick="showPanel('settings')"><i>⚙</i><span>Settings</span></div>
+</div>
+<div class="sb-user">
+<div style="display:flex;align-items:center;gap:10px">
+<div class="sb-avatar" id="sb-avatar"></div>
+<div><div style="font-size:13px;font-weight:500" id="sb-name"></div><div style="font-size:11px;color:var(--muted)" id="sb-email"></div></div>
+</div>
+<button class="sb-logout" onclick="localStorage.removeItem('pf_user');window.location.href='/login/'">Sign Out</button>
+</div>
+</div>
+<div class="main">
+<!-- DASHBOARD -->
+<div class="panel active" id="p-dash">
+<h1 id="welcome-msg"></h1>
+<p style="font-size:14px;color:var(--muted);margin-bottom:24px">Your content engine is running. Here's today's snapshot.</p>
+<div class="stats">
+<div class="stat"><div class="stat-label">Content Published</div><div class="stat-val" style="color:var(--gold)" id="s-content">0</div><div class="stat-sub" id="s-content-sub"></div></div>
+<div class="stat"><div class="stat-label">Social Posts</div><div class="stat-val" style="color:var(--green)" id="s-social">0</div><div class="stat-sub" id="s-social-sub"></div></div>
+<div class="stat"><div class="stat-label">Leads Generated</div><div class="stat-val" style="color:var(--purple)" id="s-leads">0</div><div class="stat-sub" id="s-leads-sub"></div></div>
+<div class="stat"><div class="stat-label">Voice Calls</div><div class="stat-val" style="color:var(--red)" id="s-voice">0</div><div class="stat-sub" id="s-voice-sub"></div></div>
+</div>
+<div class="grid2">
+<div class="card"><div class="card-title">This week's content</div>
+<div class="row"><span style="font-size:13px">5 AI Tools Replacing Content Teams</span><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Published</span></div>
+<div class="row"><span style="font-size:13px">LinkedIn Carousel: Growth Tips</span><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
+<div class="row"><span style="font-size:13px">Weekly Digest Newsletter</span><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
+</div>
+<div class="card"><div class="card-title">System Status</div>
+<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Content Engine</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Running</span></div>
+<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Social Scheduler</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Running</span></div>
+<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Voice AI (631-892-9817)</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Live</span></div>
+<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Lead Pipeline</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Active</span></div>
+<div class="row"><span style="font-size:13px;color:rgba(255,255,255,.6)">Watchdog</span><span style="font-size:11px;color:var(--green);font-weight:600"><span class="dot" style="background:var(--green)"></span>Monitoring</span></div>
+</div></div></div>
+<!-- CONTENT -->
+<div class="panel" id="p-content">
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px"><h2 style="margin:0">Content Pipeline</h2><button class="btn">+ New Content</button></div>
+<div class="card" style="padding:0;overflow:hidden">
+<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">5 AI Tools Replacing Content Teams in 2026</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Blog · 1,847 words · Mar 22</div></div><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Published</span></div>
+<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">Why Your Agency Needs Automated Content</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Blog · 2,134 words · Mar 21</div></div><span class="badge" style="background:rgba(34,197,94,.1);color:var(--green)">Published</span></div>
+<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">The $4,000/Month Content Mistake</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Blog · 1,562 words · Mar 23</div></div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
+<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">LinkedIn Carousel: Growth Tips</div><div style="font-size:12px;color:var(--muted);margin-top:3px">LinkedIn · 450 words · Mar 23</div></div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold)">Scheduled</span></div>
+<div class="row" style="padding:16px 20px"><div style="flex:1"><div style="font-size:14px;font-weight:500">Weekly Digest Newsletter</div><div style="font-size:12px;color:var(--muted);margin-top:3px">Email · 890 words · Mar 24</div></div><span class="badge" style="background:rgba(255,255,255,.05);color:var(--muted)">Draft</span></div>
+</div></div>
+
+<!-- SOCIAL -->
+<div class="panel" id="p-social">
+<h2>Social Media Command</h2>
+<div class="grid3" id="social-grid"></div>
+</div>
+<!-- ANALYTICS -->
+<div class="panel" id="p-analytics">
+<h2>Analytics</h2>
+<div class="card"><div class="card-title">Weekly Traffic</div><div id="chart" style="display:flex;align-items:flex-end;gap:8px;height:140px"></div></div>
+<div class="grid3">
+<div class="stat"><div class="stat-label">Page Views</div><div class="stat-val" style="color:var(--gold)">3,540</div><div class="stat-sub" style="color:var(--green)">↑ 18% this week</div></div>
+<div class="stat"><div class="stat-label">Avg Session</div><div class="stat-val" style="color:var(--green)">3:42</div><div class="stat-sub" style="color:var(--green)">↑ 12% minutes</div></div>
+<div class="stat"><div class="stat-label">Bounce Rate</div><div class="stat-val" style="color:var(--purple)">34%</div><div class="stat-sub">industry avg 52%</div></div>
+</div></div>
+
+<!-- VOICE AI -->
+<div class="panel" id="p-voice">
+<h2 style="margin-bottom:6px">Voice AI Agents</h2>
+<p style="font-size:13px;color:var(--muted);margin-bottom:24px">Your 24/7 phone team · (631) 892-9817</p>
+<div class="grid2" id="voice-grid"></div>
+</div>
+
+<!-- MEDIA -->
+<div class="panel" id="p-media">
+<h2 style="margin-bottom:6px">Media Production</h2>
+<p style="font-size:13px;color:var(--muted);margin-bottom:24px">Director Marcus Kane · Video, Audio, Images, Ads</p>
+<div class="grid4">
+<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">12</div><div style="font-size:12px;font-weight:600;margin-top:4px">Videos</div><div style="font-size:10px;color:var(--muted)">This month</div></div>
+<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">34</div><div style="font-size:12px;font-weight:600;margin-top:4px">Voiceovers</div><div style="font-size:10px;color:var(--muted)">Generated</div></div>
+<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">67</div><div style="font-size:12px;font-weight:600;margin-top:4px">Images</div><div style="font-size:10px;color:var(--muted)">Created</div></div>
+<div class="stat" style="text-align:center"><div class="stat-val" style="color:var(--gold);font-size:28px">8</div><div style="font-size:12px;font-weight:600;margin-top:4px">Ad Creatives</div><div style="font-size:10px;color:var(--muted)">A/B variants</div></div>
+</div>
+<div class="card" style="margin-top:16px"><div class="card-title">Quick Actions</div><div style="display:flex;gap:10px;flex-wrap:wrap" id="media-actions"></div></div>
+</div>
+<!-- LEADS -->
+<div class="panel" id="p-leads">
+<h2>Lead Pipeline</h2>
+<div class="card" style="padding:0;overflow:hidden">
+<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:12px 20px;font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em;font-weight:600;border-bottom:1px solid var(--border)"><div>Name</div><div>Company</div><div>Status</div><div>Score</div><div>Source</div></div>
+<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">Sarah Chen</div><div style="color:var(--muted)">Acme Agency</div><span class="badge" style="background:rgba(239,68,68,.1);color:var(--red);width:fit-content">Hot</span><div style="font-weight:600;color:var(--green)">92</div><div style="font-size:12px;color:var(--muted)">Inbound call</div></div>
+<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">David Kim</div><div style="color:var(--muted)">GrowthLab</div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold);width:fit-content">Warm</span><div style="font-weight:600;color:var(--gold)">78</div><div style="font-size:12px;color:var(--muted)">Website form</div></div>
+<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">Maria Santos</div><div style="color:var(--muted)">ContentPro</div><span class="badge" style="background:rgba(239,68,68,.1);color:var(--red);width:fit-content">Hot</span><div style="font-weight:600;color:var(--green)">88</div><div style="font-size:12px;color:var(--muted)">LinkedIn</div></div>
+<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center;border-bottom:1px solid rgba(255,255,255,.03)"><div style="font-weight:500">Jake Wilson</div><div style="color:var(--muted)">DigitalFirst</div><span class="badge" style="background:rgba(255,255,255,.05);color:var(--muted);width:fit-content">Cold</span><div style="font-weight:600;color:var(--muted)">45</div><div style="font-size:12px;color:var(--muted)">Outreach</div></div>
+<div style="display:grid;grid-template-columns:2fr 2fr 1fr 1fr 1.5fr;padding:14px 20px;align-items:center"><div style="font-weight:500">Lisa Park</div><div style="color:var(--muted)">BrandForge</div><span class="badge" style="background:rgba(201,168,76,.1);color:var(--gold);width:fit-content">Warm</span><div style="font-weight:600;color:var(--gold)">71</div><div style="font-size:12px;color:var(--muted)">Referral</div></div>
+</div></div>
+
+<!-- SETTINGS -->
+<div class="panel" id="p-settings">
+<h2>Settings</h2>
+<div class="card">
+<div class="card-title">Current Plan</div>
+<div style="display:flex;align-items:center;gap:16px">
+<div style="padding:12px 20px;background:linear-gradient(135deg,rgba(201,168,76,.15),rgba(201,168,76,.05));border:1px solid rgba(201,168,76,.3);border-radius:12px"><div style="font-size:22px;font-weight:700;color:var(--gold)" id="plan-name"></div><div style="font-size:14px;color:var(--muted)" id="plan-price"></div></div>
+<div style="flex:1" id="plan-features"></div>
+</div></div>
+<div class="grid2">
+<div class="card"><div class="card-title">Brand Voice</div><div style="font-size:13px;color:rgba(255,255,255,.6)">Professional, authoritative, data-driven</div><button class="btn-outline btn" style="margin-top:10px;font-size:12px;padding:8px 16px">Edit Voice Settings</button></div>
+<div class="card"><div class="card-title">Notifications</div><div style="font-size:13px;color:rgba(255,255,255,.6)">Email + Pushover alerts enabled</div><button class="btn-outline btn" style="margin-top:10px;font-size:12px;padding:8px 16px">Manage Alerts</button></div>
+</div></div>
+</div>
+<script>
+// Populate user info
+var name=u.name||'User';
+document.getElementById('sb-plan').textContent=(u.plan==='agency'?'Agency':'Growth')+' Plan';
+document.getElementById('sb-avatar').textContent=name[0].toUpperCase();
+document.getElementById('sb-name').textContent=name.split(/[._]/).map(function(w){return w.charAt(0).toUpperCase()+w.slice(1)}).join(' ');
+document.getElementById('sb-email').textContent=(u.email||'').slice(0,22);
+document.getElementById('welcome-msg').textContent='Welcome back, '+name.split(/[._@]/)[0].charAt(0).toUpperCase()+name.split(/[._@]/)[0].slice(1);
+document.getElementById('plan-name').textContent=u.plan==='agency'?'Agency':u.plan==='growth'?'Growth':'Starter';
+document.getElementById('plan-price').textContent=u.plan==='agency'?'$497/month':u.plan==='growth'?'$297/month':'$97/month';
+var feats=u.plan==='agency'?['Everything in Growth','White-label portal','Voice AI receptionist','Ad creative generation']:['Daily blog posts','6-platform social','Weekly newsletter','Priority support'];
+document.getElementById('plan-features').innerHTML='<div style="font-size:13px;color:var(--muted);margin-bottom:8px">Included:</div>'+feats.map(function(f){return '<div style="font-size:12px;color:rgba(255,255,255,.55);margin-bottom:3px">✓ '+f+'</div>'}).join('');
+
+// Panel switching
+function showPanel(id){
+  document.querySelectorAll('.panel').forEach(function(p){p.classList.remove('active')});
+  document.getElementById('p-'+id).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(function(i){i.classList.remove('active')});
+  event.currentTarget.classList.add('active');
+}
+
+// Fetch real dashboard data from API
+var token = localStorage.getItem('pf_token');
+var API = '/.netlify/functions/client-api';
+
+async function loadDashboard() {
+  try {
+    var res = await fetch(API + '?action=dashboard', {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if (res.ok) {
+      var data = await res.json();
+      document.getElementById('s-content').textContent = data.contentCount || '0';
+      document.getElementById('s-content-sub').innerHTML = '<span style="color:var(--green)">published pieces</span>';
+      document.getElementById('s-social').textContent = data.socialCount || '0';
+      document.getElementById('s-social-sub').innerHTML = '<span style="color:var(--green)">posts distributed</span>';
+      document.getElementById('s-leads').textContent = data.leadCount || '0';
+      document.getElementById('s-leads-sub').innerHTML = '<span style="color:var(--green)">leads captured</span>';
+      document.getElementById('s-voice').textContent = data.voiceCalls || '0';
+      document.getElementById('s-voice-sub').innerHTML = '<span style="color:var(--green)">AI calls handled</span>';
+    } else {
+      showDemoData();
+    }
+  } catch (e) {
+    console.warn('Dashboard fetch failed:', e.message);
+    showDemoData();
+  }
+}
+
+function showDemoData() {
+  var demoBanner = '<div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:13px;color:var(--gold)">ℹ️ <b>Live data loading...</b> — Your real metrics populate as your content engine produces results.</div>';
+  document.getElementById('p-dash').insertAdjacentHTML('afterbegin', demoBanner);
+  document.getElementById('s-content').textContent = '0';
+  document.getElementById('s-content-sub').innerHTML = '<span style="color:var(--muted)">getting started</span>';
+  document.getElementById('s-social').textContent = '0';
+  document.getElementById('s-social-sub').innerHTML = '<span style="color:var(--muted)">pending activation</span>';
+  document.getElementById('s-leads').textContent = '0';
+  document.getElementById('s-leads-sub').innerHTML = '<span style="color:var(--muted)">—</span>';
+  document.getElementById('s-voice').textContent = '0';
+  document.getElementById('s-voice-sub').innerHTML = '<span style="color:var(--muted)">—</span>';
+}
+
+loadDashboard();
+// Social grid
+var socials=[{n:'LinkedIn',p:12,f:'2.4K',e:'4.2%',c:'#0077b5',q:5},{n:'Twitter/X',p:28,f:'1.8K',e:'2.8%',c:'#1da1f2',q:7},{n:'Instagram',p:8,f:'890',e:'5.1%',c:'#e4405f',q:4},{n:'Facebook',p:6,f:'1.2K',e:'1.9%',c:'#1877f2',q:3},{n:'TikTok',p:4,f:'340',e:'7.3%',c:'#000',q:2},{n:'Pinterest',p:10,f:'560',e:'3.1%',c:'#bd081c',q:6}];
+document.getElementById('social-grid').innerHTML=socials.map(function(s){return '<div class="card" style="padding:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-size:14px;font-weight:600">'+s.n+'</span><span style="width:8px;height:8px;border-radius:50%;background:'+s.c+'"></span></div><div class="grid2" style="gap:10px"><div><div style="font-size:20px;font-weight:700;color:var(--gold)">'+s.p+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">This month</div></div><div><div style="font-size:20px;font-weight:700">'+s.f+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Followers</div></div><div><div style="font-size:16px;font-weight:600;color:var(--green)">'+s.e+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Engagement</div></div><div><div style="font-size:16px;font-weight:600;color:var(--muted)">'+s.q+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Queued</div></div></div></div>'}).join('');
+
+// Voice agents
+var agents=[{n:'Emma — Receptionist',s:'Active',c:47,sat:'92%',t:'inbound'},{n:'Michael — Sales',s:'Active',c:23,sat:'88%',t:'outbound'},{n:'Support Agent',s:'Standby',c:12,sat:'95%',t:'inbound'},{n:'Appointment Setter',s:'Active',c:8,sat:'90%',t:'outbound'}];
+document.getElementById('voice-grid').innerHTML=agents.map(function(a){var ac=a.s==='Active';return '<div class="card" style="padding:22px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px"><span style="font-size:14px;font-weight:600">'+a.n+'</span><span class="badge" style="background:'+(ac?'rgba(34,197,94,.1)':'rgba(255,255,255,.05)')+';color:'+(ac?'var(--green)':'var(--muted)')+'">'+a.s+'</span></div><div style="display:flex;gap:20px"><div><div style="font-size:24px;font-weight:700;color:var(--gold)">'+a.c+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Calls</div></div><div><div style="font-size:24px;font-weight:700;color:var(--green)">'+a.sat+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Satisfaction</div></div><div><div style="font-size:14px;font-weight:500;color:var(--muted);margin-top:6px">'+a.t+'</div><div style="font-size:10px;color:var(--muted);text-transform:uppercase">Type</div></div></div></div>'}).join('');
+
+// Chart
+var days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'],traffic=[340,520,480,690,720,410,380],mx=Math.max.apply(null,traffic);
+document.getElementById('chart').innerHTML=traffic.map(function(t,i){return '<div style="flex:1;text-align:center"><div style="height:'+Math.round(t/mx*120)+'px;background:linear-gradient(180deg,rgba(201,168,76,.8),rgba(201,168,76,.2));border-radius:6px 6px 0 0;min-height:4px"></div><div style="font-size:10px;color:var(--muted);margin-top:6px">'+days[i]+'</div><div style="font-size:11px;color:var(--gold);font-weight:600">'+t+'</div></div>'}).join('');
+
+// Media actions
+['Generate Video Script','Create Voiceover','Product Photo Shoot','URL → Video Ad','Podcast Episode','Social Graphics'].forEach(function(a){
+  var b=document.createElement('button');b.className='btn btn-outline';b.style.cssText='font-size:12px;padding:10px 18px';b.textContent=a;
+  document.getElementById('media-actions').appendChild(b);
+});
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body></html>

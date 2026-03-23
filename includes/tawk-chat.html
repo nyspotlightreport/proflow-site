@@ -1,0 +1,40 @@
+<!-- Tawk.to Live Chat — INSTALL IN SITE HEAD. Free forever. -->
+<!-- Replace YOUR_PROPERTY_ID/YOUR_WIDGET_ID after creating account at tawk.to -->
+<!--
+<script type="text/javascript">
+var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+(function(){
+var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+s1.async=true;
+s1.src='https://embed.tawk.to/YOUR_PROPERTY_ID/YOUR_WIDGET_ID';
+s1.charset='UTF-8';
+s1.setAttribute('crossorigin','*');
+s0.parentNode.insertBefore(s1,s0);
+})();
+// Lead capture: when chat ends, send to our Netlify function
+Tawk_API.onChatEnded = function() {
+  const visitor = Tawk_API.visitor || {};
+  if (visitor.email || visitor.name) {
+    fetch('/api/chat-lead-capture', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({
+        name: visitor.name || '',
+        email: visitor.email || '',
+        message: 'Chat ended — visitor engaged',
+        page: window.location.pathname,
+      })
+    });
+  }
+};
+</script>
+-->
+
+<!-- Steps to activate:
+1. Go to tawk.to and create a free account
+2. Create a new property for nyspotlightreport.com
+3. Copy your Property ID and Widget ID
+4. Replace YOUR_PROPERTY_ID/YOUR_WIDGET_ID above
+5. Uncomment the script block
+6. Add to site/index.html before </body>
+-->

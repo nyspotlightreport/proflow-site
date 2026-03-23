@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProFlow Login — Client Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{min-height:100vh;background:linear-gradient(135deg,#0a0a0f 0%,#141420 50%,#0d1117 100%);display:flex;align-items:center;justify-content:center;font-family:'Outfit',sans-serif;padding:20px}
+.glow{position:absolute;top:-120px;left:50%;transform:translateX(-50%);width:240px;height:240px;background:radial-gradient(circle,rgba(201,168,76,.15) 0%,transparent 70%);border-radius:50%;filter:blur(40px)}
+.card{width:100%;max-width:420px;position:relative}
+.inner{background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);border-radius:24px;padding:48px 36px;backdrop-filter:blur(20px)}
+.logo{font-family:'Instrument Serif',serif;font-size:28px;color:#f7f5f0;text-align:center;margin-bottom:4px}
+.logo span{color:#c9a84c}
+.sub{font-size:13px;color:rgba(255,255,255,.35);text-align:center;letter-spacing:.08em;text-transform:uppercase;font-weight:500;margin-bottom:36px}
+label{display:block;font-size:11px;color:rgba(255,255,255,.4);letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;font-weight:600}
+input{width:100%;padding:14px 16px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;color:#f7f5f0;font-size:15px;outline:none;font-family:inherit;margin-bottom:20px;transition:border .2s}
+input:focus{border-color:rgba(201,168,76,.4)}
+.btn{width:100%;padding:15px;background:linear-gradient(135deg,#c9a84c,#b8963f);border:none;border-radius:12px;color:#0a0a0f;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;letter-spacing:.02em;transition:all .2s}
+.btn:hover{transform:translateY(-1px);box-shadow:0 8px 24px rgba(201,168,76,.25)}
+.btn:disabled{opacity:.6;cursor:not-allowed;transform:none;box-shadow:none}
+.err{color:#ef4444;font-size:13px;text-align:center;margin-bottom:16px;display:none}
+.links{text-align:center;margin-top:20px;font-size:13px;color:rgba(255,255,255,.3)}
+.links a{color:rgba(201,168,76,.7);text-decoration:none}
+.copy{text-align:center;margin-top:24px;font-size:11px;color:rgba(255,255,255,.2)}
+</style>
+</head>
+<body>
+<div class="card">
+<div class="glow"></div>
+<div class="inner">
+<div class="logo">Pro<span>Flow</span></div>
+<div class="sub">Client Portal</div>
+<div id="err" class="err">Invalid credentials. Please try again.</div>
+<label>Email</label>
+<input type="email" id="email" placeholder="you@company.com">
+<label>Password</label>
+<input type="password" id="pass" placeholder="********">
+<div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;margin-top:-8px"><input type="checkbox" id="remember" checked style="accent-color:#c9a84c;width:16px;height:16px"><label for="remember" style="font-size:13px;color:rgba(255,255,255,.4);letter-spacing:0;text-transform:none;font-weight:400;margin:0">Remember me</label></div>
+<button class="btn" id="loginBtn" onclick="handleLogin()">Sign In →</button>
+<div class="links">
+<a href="/reset-password/">Forgot password?</a> · <a href="/proflow/">Get ProFlow</a> · <a href="/">Home</a>
+</div>
+</div>
+<div class="copy">© 2026 ProFlow · ProFlow AI Platform</div>
+</div>
+<script>
+async function handleLogin(){
+  var btn=document.getElementById('loginBtn');
+  var errEl=document.getElementById('err');
+  var e=document.getElementById('email').value.trim();
+  var p=document.getElementById('pass').value;
+  errEl.style.display='none';
+  if(!e||!p||p.length<4){errEl.style.display='block';return;}
+  btn.disabled=true;btn.textContent='Signing in...';
+  try{
+    var res=await fetch('/api/auth-login',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({email:e,password:p})
+    });
+    var data=await res.json();
+    if(res.ok&&data.token){
+      localStorage.setItem('pf_token',data.token);
+      localStorage.setItem('pf_user',JSON.stringify({email:data.email,name:data.name,plan:data.plan,role:data.role}));
+      window.location.href='/portal/';
+    } else {
+      errEl.textContent=data.error||'Invalid credentials. Please try again.';
+      errEl.style.display='block';
+    }
+  }catch(err){
+    errEl.textContent='Connection error. Please try again.';
+    errEl.style.display='block';
+  }
+  btn.disabled=false;btn.textContent='Sign In →';
+}
+document.getElementById('pass').addEventListener('keydown',function(e){if(e.key==='Enter')handleLogin()});
+// Auto-redirect if valid token exists
+try{var t=localStorage.getItem('pf_token');if(t){window.location.href='/portal/';}}catch(e){}
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body>
+</html>

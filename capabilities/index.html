@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProFlow Capabilities & ROI — ProFlow</title>
+<meta name="description" content="See everything ProFlow does: 30 daily blogs, social media, newsletters, voice AI, analytics. Calculate your ROI and compare to freelancers, agencies, and in-house teams.">
+<meta property="og:title" content="ProFlow Capabilities & ROI Calculator — ProFlow">
+<meta property="og:description" content="The complete AI content, marketing, and automation platform. One subscription replaces your entire content team.">
+<link rel="canonical" href="https://nyspotlightreport.com/capabilities/">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#faf9f6;--paper:#fff;--ink:#0f0f0f;--g500:#6b6b6b;--g300:#a3a3a3;--g100:#e5e5e5;
+  --accent:#9e7c0c;--accent-light:rgba(158,124,12,.1);--green:#16793a;--red:#b91c1c;
+  --serif:'Playfair Display',Georgia,serif;--sans:'DM Sans','Helvetica Neue',sans-serif;
+  --max:1140px;--px:clamp(20px,5vw,80px);--radius:12px;--shadow:0 2px 16px rgba(0,0,0,.06);
+}
+html{scroll-behavior:smooth}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+a{color:inherit;text-decoration:none}
+img{max-width:100%;display:block}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:1000;background:rgba(250,249,246,.92);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-bottom:1px solid var(--g100);height:64px;display:flex;align-items:center;justify-content:space-between;padding:0 var(--px)}
+.n-logo{font-family:var(--serif);font-size:17px;font-weight:600;letter-spacing:-.02em;white-space:nowrap}
+.n-logo span{color:var(--accent)}
+.n-links{display:flex;align-items:center;gap:24px}
+.n-links a{font-size:13px;color:var(--g500);font-weight:500;transition:color .2s}
+.n-links a:hover{color:var(--ink)}
+.n-cta{background:var(--ink);color:#fff!important;padding:9px 22px;border-radius:100px;font-weight:600;font-size:13px;transition:background .2s}
+.n-cta:hover{background:#333}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:4px}
+.hamburger svg{width:24px;height:24px;color:var(--ink)}
+
+/* SECTIONS */
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--px)}
+section{padding:80px 0}
+.s-label{font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px}
+.s-title{font-family:var(--serif);font-size:clamp(28px,4vw,44px);font-weight:600;line-height:1.15;letter-spacing:-.02em;margin-bottom:12px}
+.s-desc{font-size:16px;color:var(--g500);max-width:560px;line-height:1.7;font-weight:400;margin-bottom:40px}
+
+/* HERO */
+.hero{padding-top:140px;padding-bottom:60px;text-align:center}
+.hero .wrap{max-width:800px}
+.hero .s-label{margin-bottom:16px}
+.hero h1{font-family:var(--serif);font-size:clamp(32px,5.5vw,56px);font-weight:700;line-height:1.1;letter-spacing:-.03em;margin-bottom:20px}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero p{font-size:18px;color:var(--g500);max-width:600px;margin:0 auto 36px;line-height:1.7;font-weight:400}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:#fff;padding:16px 36px;border-radius:100px;font-size:15px;font-weight:600;transition:all .2s}
+.hero-cta:hover{background:#333;transform:translateY(-1px)}
+
+/* FEATURE MATRIX */
+.matrix-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--g100);border-radius:var(--radius);background:var(--paper)}
+.matrix{width:100%;min-width:680px;border-collapse:collapse;font-size:14px}
+.matrix thead{position:sticky;top:0;z-index:10}
+.matrix th{background:var(--ink);color:#fff;padding:14px 16px;font-weight:600;font-size:13px;text-align:center;letter-spacing:.02em;white-space:nowrap}
+.matrix th:first-child{text-align:left;min-width:220px}
+.matrix th.pop-col{background:var(--accent);color:var(--ink)}
+.matrix .pop-tag{display:block;font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;opacity:.85}
+.matrix td{padding:11px 16px;border-bottom:1px solid var(--g100);text-align:center;font-size:13px;color:var(--g500)}
+.matrix td:first-child{text-align:left;font-weight:500;color:var(--ink)}
+.matrix td.pop-cell{background:rgba(158,124,12,.04)}
+.matrix .cat-row td{background:var(--bg);font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);padding:10px 16px}
+.matrix .check{color:var(--green);font-weight:700;font-size:15px}
+.matrix .dash{color:var(--g300)}
+
+/* ROI CALCULATOR */
+.roi-section{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);padding:48px;margin-top:20px}
+.roi-grid{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start}
+.roi-sliders{display:flex;flex-direction:column;gap:24px}
+.slider-group label{display:flex;justify-content:space-between;align-items:center;font-size:14px;font-weight:500;margin-bottom:8px}
+.slider-group label span{font-weight:700;color:var(--accent);font-size:15px}
+.slider-group input[type=range]{width:100%;height:6px;-webkit-appearance:none;appearance:none;background:var(--g100);border-radius:3px;outline:none;cursor:pointer}
+.slider-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.slider-group input[type=range]::-moz-range-thumb{width:20px;height:20px;border-radius:50%;background:var(--accent);cursor:pointer;border:none}
+.roi-results{background:var(--bg);border-radius:var(--radius);padding:36px;text-align:center}
+.roi-results .current-cost{font-size:14px;color:var(--g500);margin-bottom:4px}
+.roi-results .current-cost strong{font-size:28px;font-family:var(--serif);color:var(--red);display:block;margin-top:4px}
+.roi-results .proflow-cost{font-size:14px;color:var(--g500);margin:20px 0 4px}
+.roi-results .proflow-cost strong{font-size:28px;font-family:var(--serif);color:var(--green);display:block;margin-top:4px}
+.roi-bar{margin:28px 0;position:relative;height:40px;border-radius:8px;overflow:hidden;background:var(--g100)}
+.roi-bar-you{height:100%;background:var(--red);border-radius:8px;position:absolute;left:0;top:0;transition:width .4s}
+.roi-bar-pf{height:100%;background:var(--green);border-radius:8px;position:absolute;left:0;top:0;transition:width .4s}
+.roi-bar-labels{display:flex;justify-content:space-between;font-size:11px;color:var(--g500);margin-top:6px}
+.savings-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.savings-card{background:var(--paper);border-radius:8px;padding:16px;text-align:center;border:1px solid var(--g100)}
+.savings-card .num{font-family:var(--serif);font-size:22px;font-weight:700;color:var(--green)}
+.savings-card .lbl{font-size:12px;color:var(--g500);margin-top:2px}
+.roi-quip{margin-top:20px;font-size:14px;color:var(--accent);font-weight:600;font-style:italic}
+
+/* GALLERY TABS */
+.tabs-nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:32px;border-bottom:2px solid var(--g100);padding-bottom:0}
+.tab-btn{padding:10px 20px;font-size:13px;font-weight:600;color:var(--g500);background:none;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s;font-family:var(--sans)}
+.tab-btn:hover{color:var(--ink)}
+.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}
+.card{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);overflow:hidden;transition:all .25s}
+.card:hover{border-color:var(--g300);box-shadow:var(--shadow);transform:translateY(-2px)}
+.card-body{padding:20px}
+.card-body h4{font-size:15px;font-weight:600;margin-bottom:6px;line-height:1.3}
+.card-body p{font-size:13px;color:var(--g500);line-height:1.6}
+.card-meta{display:flex;gap:12px;margin-top:10px;font-size:12px;color:var(--g300)}
+.card-meta span{display:flex;align-items:center;gap:4px}
+.card-meta .green{color:var(--green);font-weight:600}
+.card-img{height:160px;display:flex;align-items:center;justify-content:center;font-size:13px;color:#fff;font-weight:600;letter-spacing:.02em}
+.platform-card{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);padding:20px;transition:all .25s}
+.platform-card:hover{border-color:var(--g300);box-shadow:var(--shadow)}
+.platform-card h4{font-size:14px;font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.platform-card h4 .dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.platform-card p{font-size:13px;color:var(--g500);line-height:1.5;font-style:italic}
+.newsletter-mock{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);max-width:560px;margin:0 auto;overflow:hidden}
+.nl-header{background:var(--ink);color:#fff;padding:24px 28px;text-align:center}
+.nl-header h4{font-family:var(--serif);font-size:20px;margin-bottom:4px}
+.nl-header p{font-size:12px;opacity:.7}
+.nl-body{padding:28px}
+.nl-body h5{font-size:15px;font-weight:600;margin-bottom:8px}
+.nl-body p{font-size:13px;color:var(--g500);line-height:1.6;margin-bottom:16px}
+.nl-body .nl-btn{display:inline-block;background:var(--accent);color:#fff;padding:10px 24px;border-radius:6px;font-size:13px;font-weight:600}
+.report-mock{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);padding:28px;max-width:640px;margin:0 auto}
+.report-mock h4{font-size:16px;font-weight:700;margin-bottom:4px}
+.report-mock .date{font-size:12px;color:var(--g300);margin-bottom:20px}
+.report-table{width:100%;border-collapse:collapse;font-size:13px;margin-bottom:16px}
+.report-table th{text-align:left;padding:8px 10px;border-bottom:2px solid var(--g100);font-size:12px;font-weight:600;color:var(--g500);text-transform:uppercase;letter-spacing:.06em}
+.report-table td{padding:8px 10px;border-bottom:1px solid var(--g100)}
+.report-table .up{color:var(--green);font-weight:600}
+.report-table .down{color:var(--red);font-weight:600}
+.voice-mock{display:grid;grid-template-columns:1fr 1fr;gap:28px;align-items:start}
+.transcript{background:var(--bg);border-radius:var(--radius);padding:24px;font-size:13px;line-height:1.8}
+.transcript .speaker{font-weight:700;color:var(--accent)}
+.transcript .ai-speaker{font-weight:700;color:var(--green)}
+.voice-cta-card{background:var(--paper);border:2px solid var(--accent);border-radius:var(--radius);padding:28px;text-align:center}
+.voice-cta-card h4{font-family:var(--serif);font-size:22px;margin-bottom:8px}
+.voice-cta-card p{font-size:13px;color:var(--g500);margin-bottom:16px}
+.voice-cta-card .phone{font-family:var(--serif);font-size:28px;color:var(--accent);font-weight:700}
+
+/* COMPETITOR TABLE */
+.comp-wrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--g100);border-radius:var(--radius);background:var(--paper)}
+.comp{width:100%;min-width:760px;border-collapse:collapse;font-size:13px}
+.comp th{padding:12px 14px;background:var(--ink);color:#fff;font-weight:600;font-size:12px;text-align:center;white-space:nowrap}
+.comp th:first-child{text-align:left;min-width:160px}
+.comp th.pf-col{background:var(--green);color:#fff}
+.comp td{padding:10px 14px;border-bottom:1px solid var(--g100);text-align:center;color:var(--g500)}
+.comp td:first-child{text-align:left;font-weight:500;color:var(--ink)}
+.comp td.pf-cell{background:rgba(22,121,58,.05);color:var(--green);font-weight:600}
+
+/* INTEGRATIONS */
+.int-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:16px}
+.int-item{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);padding:20px 12px;text-align:center;transition:all .2s}
+.int-item:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.int-item .ico{font-size:28px;margin-bottom:8px}
+.int-item .name{font-size:12px;font-weight:600;color:var(--ink)}
+
+/* DELIVERABLES */
+.del-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.del-card{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);padding:24px;display:flex;gap:16px;align-items:flex-start;transition:all .2s}
+.del-card:hover{border-color:var(--accent);box-shadow:var(--shadow)}
+.del-card .del-ico{width:44px;height:44px;border-radius:10px;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.del-card h4{font-size:15px;font-weight:700;margin-bottom:4px}
+.del-card p{font-size:12px;color:var(--g500);line-height:1.5}
+.del-value{text-align:center;margin-top:40px;padding:32px;background:linear-gradient(135deg,rgba(158,124,12,.08),rgba(22,121,58,.08));border-radius:var(--radius)}
+.del-value .est{font-size:14px;color:var(--g500);margin-bottom:4px}
+.del-value .big{font-family:var(--serif);font-size:clamp(32px,5vw,52px);font-weight:700;color:var(--red);text-decoration:line-through;opacity:.6}
+.del-value .pay{font-family:var(--serif);font-size:clamp(28px,4vw,44px);font-weight:700;color:var(--green);margin-top:8px}
+
+/* BOTTOM CTA */
+.bottom-cta{text-align:center;padding:80px 0 40px}
+.bottom-cta .dynamic-save{font-family:var(--serif);font-size:clamp(24px,4vw,40px);font-weight:700;margin-bottom:36px}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:32px}
+.plan{background:var(--paper);border:1px solid var(--g100);border-radius:var(--radius);padding:32px 24px;position:relative;transition:all .25s;text-align:center}
+.plan:hover{border-color:var(--g300);transform:translateY(-2px);box-shadow:var(--shadow)}
+.plan.featured{border:2px solid var(--accent);box-shadow:0 8px 32px rgba(158,124,12,.12)}
+.plan-badge{position:absolute;top:-13px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:11px;font-weight:700;padding:4px 16px;border-radius:100px;letter-spacing:.04em;white-space:nowrap}
+.plan-name{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--g500);margin-bottom:6px}
+.plan-price{font-family:var(--serif);font-size:44px;font-weight:700;margin-bottom:2px}
+.plan-per{font-size:13px;color:var(--g300);margin-bottom:20px}
+.plan-features{list-style:none;text-align:left;font-size:13px;color:var(--g500);margin-bottom:24px}
+.plan-features li{padding:6px 0;border-bottom:1px solid var(--g100);display:flex;align-items:center;gap:8px}
+.plan-features li::before{content:"✓";color:var(--green);font-weight:700;font-size:14px}
+.plan-btn{display:block;padding:14px;border-radius:100px;font-size:14px;font-weight:600;transition:all .2s;text-align:center}
+.plan-btn-primary{background:var(--ink);color:#fff}
+.plan-btn-primary:hover{background:#333}
+.plan-btn-secondary{border:1px solid var(--g100);color:var(--ink)}
+.plan-btn-secondary:hover{border-color:var(--ink)}
+.plan-btn-accent{background:var(--accent);color:#fff}
+.plan-btn-accent:hover{background:#876a0a}
+.cta-note{font-size:14px;color:var(--g500);margin-top:8px}
+
+/* FOOTER */
+footer{border-top:1px solid var(--g100);padding:40px 0;margin-top:40px}
+.footer-inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px}
+.footer-copy{font-size:13px;color:var(--g300)}
+.footer-links{display:flex;gap:20px}
+.footer-links a{font-size:13px;color:var(--g500);transition:color .2s}
+.footer-links a:hover{color:var(--ink)}
+
+/* MOBILE */
+@media(max-width:768px){
+  .n-links{display:none;position:fixed;top:64px;left:0;right:0;background:var(--bg);flex-direction:column;padding:24px;gap:16px;border-bottom:1px solid var(--g100);box-shadow:0 8px 24px rgba(0,0,0,.08)}
+  .n-links.open{display:flex}
+  .hamburger{display:block}
+  .roi-grid{grid-template-columns:1fr}
+  .plans{grid-template-columns:1fr}
+  .voice-mock{grid-template-columns:1fr}
+  .card-grid{grid-template-columns:1fr}
+  .roi-section{padding:28px 20px}
+  .savings-grid{grid-template-columns:1fr 1fr}
+  .footer-inner{flex-direction:column;text-align:center}
+}
+@media(max-width:480px){
+  section{padding:48px 0}
+  .hero{padding-top:110px;padding-bottom:40px}
+  .del-grid{grid-template-columns:1fr}
+  .int-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a href="/" class="n-logo">NY <span>Spotlight</span> Report</a>
+  <button class="hamburger" onclick="document.querySelector('.n-links').classList.toggle('open')" aria-label="Menu">
+    <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+  </button>
+  <div class="n-links">
+    <a href="/">Home</a>
+    <a href="/proflow/">ProFlow</a>
+    <a href="/demo/">Demo</a>
+    <a href="/blog/">Blog</a>
+    <a href="/login/" class="n-cta">Sign In</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="wrap">
+    <div class="s-label">ProFlow Platform</div>
+    <h1>Everything ProFlow Does <em>For You</em></h1>
+    <p>The complete AI content, marketing, and automation platform. One subscription replaces your entire content team.</p>
+    <a href="/activate/" class="hero-cta">Start Your Free Onboarding &rarr;</a>
+  </div>
+</section>
+
+<!-- FEATURE MATRIX -->
+<section>
+  <div class="wrap">
+    <div class="s-label">Feature Matrix</div>
+    <h2 class="s-title">Every Feature, Every Plan</h2>
+    <p class="s-desc">Compare what you get at each tier. All plans include our core AI content engine with daily publishing.</p>
+
+    <div class="matrix-wrap">
+      <table class="matrix">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Starter — $97/mo</th>
+            <th class="pop-col">Growth — $297/mo<span class="pop-tag">Most Popular</span></th>
+            <th>Agency — $497/mo</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- CONTENT PRODUCTION -->
+          <tr class="cat-row"><td colspan="4">Content Production</td></tr>
+          <tr><td>Daily SEO blog posts (30/mo)</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Brand voice matching</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Content calendar</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Revision requests</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Long-form guides (2,000+ words)</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+
+          <!-- SOCIAL MEDIA -->
+          <tr class="cat-row"><td colspan="4">Social Media</td></tr>
+          <tr><td>Platform count</td><td>3</td><td class="pop-cell">6</td><td>6 + custom</td></tr>
+          <tr><td>Daily posting schedule</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Hashtag research</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Engagement tracking</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Carousel / Reel creation</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Social listening</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+
+          <!-- EMAIL & NEWSLETTER -->
+          <tr class="cat-row"><td colspan="4">Email &amp; Newsletter</td></tr>
+          <tr><td>Weekly newsletter</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Custom templates</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Subscriber management</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>A/B testing</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+
+          <!-- IMAGES & MEDIA -->
+          <tr class="cat-row"><td colspan="4">Images &amp; Media</td></tr>
+          <tr><td>HD blog images (30/mo)</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Social graphics</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Ad creatives</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Video scripts</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+
+          <!-- VOICE AI -->
+          <tr class="cat-row"><td colspan="4">Voice AI</td></tr>
+          <tr><td>24/7 AI receptionist</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>AI sales bot</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>AI support bot</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Call analytics</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Voicemail transcription</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+
+          <!-- ANALYTICS -->
+          <tr class="cat-row"><td colspan="4">Analytics</td></tr>
+          <tr><td>Weekly performance reports</td><td class="check">&#10003;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Real-time dashboard</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>SEO ranking tracker</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Lead tracking</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Custom KPI alerts</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+
+          <!-- ADVANCED -->
+          <tr class="cat-row"><td colspan="4">Advanced</td></tr>
+          <tr><td>White-label portal</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>API access</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Dedicated account manager</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Custom integrations</td><td class="dash">&mdash;</td><td class="pop-cell dash">&mdash;</td><td class="check">&#10003;</td></tr>
+          <tr><td>Priority support</td><td class="dash">&mdash;</td><td class="pop-cell check">&#10003;</td><td class="check">&#10003;</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ROI CALCULATOR -->
+<section>
+  <div class="wrap">
+    <div class="s-label">ROI Calculator</div>
+    <h2 class="s-title">Calculate Your Savings</h2>
+    <p class="s-desc">Drag the sliders to match what you currently spend (or would spend) on each role. See how ProFlow compares instantly.</p>
+
+    <div class="roi-section">
+      <div class="roi-grid">
+        <div class="roi-sliders">
+          <div class="slider-group">
+            <label>Content Writer <span id="val-writer">$4,000</span></label>
+            <input type="range" min="0" max="8000" step="100" value="4000" id="sl-writer" oninput="calcROI()">
+          </div>
+          <div class="slider-group">
+            <label>Social Media Manager <span id="val-social">$3,000</span></label>
+            <input type="range" min="0" max="6000" step="100" value="3000" id="sl-social" oninput="calcROI()">
+          </div>
+          <div class="slider-group">
+            <label>Graphic Designer <span id="val-design">$2,500</span></label>
+            <input type="range" min="0" max="5000" step="100" value="2500" id="sl-design" oninput="calcROI()">
+          </div>
+          <div class="slider-group">
+            <label>Email Marketing <span id="val-email">$1,500</span></label>
+            <input type="range" min="0" max="4000" step="100" value="1500" id="sl-email" oninput="calcROI()">
+          </div>
+          <div class="slider-group">
+            <label>Phone Receptionist <span id="val-phone">$2,800</span></label>
+            <input type="range" min="0" max="5000" step="100" value="2800" id="sl-phone" oninput="calcROI()">
+          </div>
+        </div>
+
+        <div class="roi-results">
+          <div class="current-cost">Your current monthly cost:<strong id="roi-current">$13,800</strong></div>
+          <div class="proflow-cost">ProFlow Growth plan:<strong id="roi-proflow">$297/mo</strong></div>
+
+          <div class="roi-bar">
+            <div class="roi-bar-you" id="roi-bar-you" style="width:100%"></div>
+          </div>
+          <div class="roi-bar" style="margin-top:8px">
+            <div class="roi-bar-pf" id="roi-bar-pf" style="width:2.2%"></div>
+          </div>
+          <div class="roi-bar-labels">
+            <span>Your cost</span>
+            <span>ProFlow $297</span>
+          </div>
+
+          <div class="savings-grid">
+            <div class="savings-card">
+              <div class="num" id="roi-monthly">$13,503</div>
+              <div class="lbl">Monthly Savings</div>
+            </div>
+            <div class="savings-card">
+              <div class="num" id="roi-annual">$162,036</div>
+              <div class="lbl">Annual Savings</div>
+            </div>
+            <div class="savings-card">
+              <div class="num" id="roi-pct">4,546%</div>
+              <div class="lbl">Return on Investment</div>
+            </div>
+            <div class="savings-card">
+              <div class="num" id="roi-team">46x</div>
+              <div class="lbl">Value Multiplier</div>
+            </div>
+          </div>
+          <div class="roi-quip" id="roi-quip">"That's like getting a 46-person team for less than one freelancer."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT GALLERY -->
+<section>
+  <div class="wrap">
+    <div class="s-label">Product Gallery</div>
+    <h2 class="s-title">See What ProFlow Creates</h2>
+    <p class="s-desc">Real examples of the content, graphics, and reports our AI engine produces every day for clients.</p>
+
+    <div class="tabs-nav">
+      <button class="tab-btn active" onclick="showTab('blog')">Blog Posts</button>
+      <button class="tab-btn" onclick="showTab('social')">Social Media</button>
+      <button class="tab-btn" onclick="showTab('images')">Images</button>
+      <button class="tab-btn" onclick="showTab('newsletters')">Newsletters</button>
+      <button class="tab-btn" onclick="showTab('reports')">Reports</button>
+      <button class="tab-btn" onclick="showTab('voice')">Voice AI</button>
+    </div>
+
+    <!-- Blog Posts Tab -->
+    <div class="tab-panel active" id="tab-blog">
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-body">
+            <h4>10 SEO Strategies That Actually Work in 2026</h4>
+            <p>Search engine optimization has evolved dramatically over the past year. With AI-driven search results reshaping the landscape, businesses need to adapt their strategies to stay visible. In this comprehensive guide, we break down the ten most effective tactics that are delivering real results for small and mid-size companies right now.</p>
+            <div class="card-meta">
+              <span>1,420 words</span>
+              <span class="green">SEO Score: 94/100</span>
+              <span>5 min read</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h4>Why NYC Small Businesses Are Switching to AI Content</h4>
+            <p>The economics of content creation have shifted permanently. A recent survey of 200 Manhattan-based small businesses found that 67% have already adopted some form of AI-assisted content production. We explore the driving factors behind this transition, the results they are seeing, and what it means for the future of local marketing.</p>
+            <div class="card-meta">
+              <span>1,680 words</span>
+              <span class="green">SEO Score: 91/100</span>
+              <span>7 min read</span>
+            </div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-body">
+            <h4>The Complete Guide to Email Marketing Automation</h4>
+            <p>Email remains the highest-ROI marketing channel, returning an average of $42 for every dollar spent. But manual email campaigns are time-consuming and inconsistent. This guide walks you through setting up fully automated email sequences that nurture leads, re-engage dormant subscribers, and drive predictable monthly revenue.</p>
+            <div class="card-meta">
+              <span>2,240 words</span>
+              <span class="green">SEO Score: 97/100</span>
+              <span>9 min read</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Social Media Tab -->
+    <div class="tab-panel" id="tab-social">
+      <div class="card-grid" style="grid-template-columns:repeat(auto-fill,minmax(280px,1fr))">
+        <div class="platform-card">
+          <h4><span class="dot" style="background:#0077B5"></span> LinkedIn</h4>
+          <p>"Most businesses don't have a content problem. They have a consistency problem. We've published 30 blog posts, 180 social updates, and 4 newsletters this month. All on autopilot. The future of marketing isn't more people. It's better systems."</p>
+        </div>
+        <div class="platform-card">
+          <h4><span class="dot" style="background:#1DA1F2"></span> Twitter / X</h4>
+          <p>"Hot take: You don't need a content team of 10. You need one AI system that never sleeps, never misses a deadline, and writes better copy than your last three hires combined. ProFlow exists. You're welcome."</p>
+        </div>
+        <div class="platform-card">
+          <h4><span class="dot" style="background:#E4405F"></span> Instagram</h4>
+          <p>"Behind every great brand is a content engine that never stops. Today's blog post just went live, tomorrow's newsletter is already written, and next week's social calendar? Done. This is what automated content looks like. Link in bio for the full breakdown."</p>
+        </div>
+        <div class="platform-card">
+          <h4><span class="dot" style="background:#1877F2"></span> Facebook</h4>
+          <p>"New on the blog: '10 SEO Strategies That Actually Work in 2026' — We analyzed hundreds of small business websites to find what is moving the needle right now. No fluff, just actionable tactics you can implement this week. Read the full article on our site."</p>
+        </div>
+        <div class="platform-card">
+          <h4><span class="dot" style="background:#E60023"></span> Pinterest</h4>
+          <p>"SEO Strategies for Small Business 2026 | 10 proven tactics to rank higher on Google, drive organic traffic, and convert readers into customers. Save this pin for your marketing board. Full guide linked below."</p>
+        </div>
+        <div class="platform-card">
+          <h4><span class="dot" style="background:#010101"></span> TikTok</h4>
+          <p>"[HOOK] You're spending $4,000/mo on a content writer? [BODY] What if I told you an AI can write 30 blog posts, manage 6 social accounts, and send your newsletter — for $297. [CTA] Link in bio. Your content team just got replaced."</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Images Tab -->
+    <div class="tab-panel" id="tab-images">
+      <div class="card-grid">
+        <div class="card">
+          <div class="card-img" style="background:linear-gradient(135deg,#667eea,#764ba2)">Blog Header — SEO Strategy</div>
+          <div class="card-body"><p>HD blog header image for SEO strategy article. Clean, modern design with data visualization elements.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:linear-gradient(135deg,#f093fb,#f5576c)">Social Graphic — Quote Card</div>
+          <div class="card-body"><p>Instagram-optimized quote card with brand colors, logo watermark, and engagement-driving typography.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:linear-gradient(135deg,#4facfe,#00f2fe)">Newsletter Banner — Weekly</div>
+          <div class="card-body"><p>Email newsletter header banner featuring the weekly theme, publication date, and consistent brand identity.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:linear-gradient(135deg,#43e97b,#38f9d7)">Infographic — Statistics</div>
+          <div class="card-body"><p>Data-driven infographic summarizing key statistics from the latest blog post, optimized for social sharing.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:linear-gradient(135deg,#fa709a,#fee140)">Ad Creative — Retargeting</div>
+          <div class="card-body"><p>Retargeting ad creative designed for Facebook and Instagram with strong call-to-action and social proof.</p></div>
+        </div>
+        <div class="card">
+          <div class="card-img" style="background:linear-gradient(135deg,#a18cd1,#fbc2eb)">Pinterest Pin — Long Format</div>
+          <div class="card-body"><p>Pinterest-optimized long-format pin with step-by-step visual guide, branded footer, and save-worthy design.</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Newsletters Tab -->
+    <div class="tab-panel" id="tab-newsletters">
+      <div class="newsletter-mock">
+        <div class="nl-header">
+          <h4>NY Spotlight Weekly</h4>
+          <p>Your weekly marketing and business intelligence briefing</p>
+        </div>
+        <div class="nl-body">
+          <h5>This Week's Top Stories</h5>
+          <p>1. Google's latest algorithm update is rewarding long-form, expert-level content. We break down what changed and how to adapt your strategy immediately.</p>
+          <p>2. Three NYC startups raised a combined $47M this week in the AI marketing space. Here is what that means for the competitive landscape.</p>
+          <p>3. Email open rates are climbing for the first time in two years. The surprising reason why — and how to capitalize on the trend.</p>
+          <h5>Content Performance Snapshot</h5>
+          <p>Your top-performing blog post this week generated 2,340 organic visits and 47 email signups. The SEO score averaged 93/100 across all 7 published articles.</p>
+          <a href="#" class="nl-btn">View Full Dashboard &rarr;</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reports Tab -->
+    <div class="tab-panel" id="tab-reports">
+      <div class="report-mock">
+        <h4>Weekly Performance Report</h4>
+        <div class="date">March 16 &ndash; March 22, 2026</div>
+        <table class="report-table">
+          <thead>
+            <tr><th>Metric</th><th>This Week</th><th>Last Week</th><th>Change</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Blog posts published</td><td>7</td><td>7</td><td>—</td></tr>
+            <tr><td>Organic traffic</td><td>12,840</td><td>11,420</td><td class="up">+12.4%</td></tr>
+            <tr><td>Social impressions</td><td>48,200</td><td>41,600</td><td class="up">+15.9%</td></tr>
+            <tr><td>Email subscribers</td><td>3,847</td><td>3,691</td><td class="up">+156 new</td></tr>
+            <tr><td>Newsletter open rate</td><td>34.2%</td><td>32.8%</td><td class="up">+1.4%</td></tr>
+            <tr><td>Inbound calls answered</td><td>127</td><td>98</td><td class="up">+29.6%</td></tr>
+            <tr><td>Avg. SEO score</td><td>93/100</td><td>91/100</td><td class="up">+2 pts</td></tr>
+            <tr><td>Bounce rate</td><td>38.1%</td><td>41.3%</td><td class="up">-3.2%</td></tr>
+          </tbody>
+        </table>
+        <p style="font-size:13px;color:var(--g500)">Key insight: Long-tail keyword articles are driving 34% of new organic traffic. Recommended action: Increase long-form content targeting 3-5 word phrases.</p>
+      </div>
+    </div>
+
+    <!-- Voice AI Tab -->
+    <div class="tab-panel" id="tab-voice">
+      <div class="voice-mock">
+        <div class="transcript">
+          <p><span class="speaker">Caller:</span> Hi, I'm looking for information about your marketing packages.</p>
+          <p><span class="ai-speaker">ProFlow AI:</span> Welcome! Thank you for calling. I'd be happy to help you learn about our marketing packages. We offer three tiers — Starter, Growth, and Agency — each designed for different business sizes. Could you tell me a bit about your business so I can recommend the best fit?</p>
+          <p><span class="speaker">Caller:</span> Sure, I run a law firm in Manhattan with about 12 employees.</p>
+          <p><span class="ai-speaker">ProFlow AI:</span> A Manhattan law firm with 12 employees — our Growth plan at $297 per month would be an excellent fit. It includes 30 SEO-optimized blog posts monthly, social media management across six platforms, weekly newsletters, and a 24/7 AI receptionist just like me. Would you like me to schedule a demo with our team?</p>
+          <p><span class="speaker">Caller:</span> Yes, that would be great. How about Thursday at 2pm?</p>
+          <p><span class="ai-speaker">ProFlow AI:</span> I've booked you for Thursday at 2:00 PM Eastern. You'll receive a confirmation email shortly with a calendar invite and a link to join the demo. Is there anything else I can help with today?</p>
+        </div>
+        <div class="voice-cta-card">
+          <h4>Try It Right Now</h4>
+          <p>Call our AI receptionist and experience the future of business communication. Available 24/7, 365 days a year.</p>
+          <a href="tel:+16318929817" class="phone" style="text-decoration:none;color:inherit">(631) 892-9817</a>
+          <p style="margin-top:12px;font-size:11px;color:var(--g300)">Live AI receptionist &middot; Available 24/7</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPETITOR COMPARISON -->
+<section>
+  <div class="wrap">
+    <div class="s-label">Competitive Analysis</div>
+    <h2 class="s-title">ProFlow vs. The Alternatives</h2>
+    <p class="s-desc">See how ProFlow stacks up against freelancers, agencies, in-house teams, and other AI tools on the market.</p>
+
+    <div class="comp-wrap">
+      <table class="comp">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th class="pf-col">ProFlow</th>
+            <th>Freelancer</th>
+            <th>Agency</th>
+            <th>In-House</th>
+            <th>Other AI Tools</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Monthly cost</td><td class="pf-cell">$297</td><td>$3,000+</td><td>$5,000+</td><td>$8,000+</td><td>$99 &ndash; $299</td></tr>
+          <tr><td>Setup time</td><td class="pf-cell">5 minutes</td><td>2 &ndash; 4 weeks</td><td>1 &ndash; 2 months</td><td>3 &ndash; 6 months</td><td>Hours</td></tr>
+          <tr><td>Content volume</td><td class="pf-cell">30 posts/mo</td><td>4 &ndash; 8 posts</td><td>8 &ndash; 12 posts</td><td>Varies</td><td>10 &ndash; 20 posts</td></tr>
+          <tr><td>Social platforms</td><td class="pf-cell">6</td><td>2 &ndash; 3</td><td>3 &ndash; 4</td><td>3 &ndash; 4</td><td>1 &ndash; 3</td></tr>
+          <tr><td>Quality consistency</td><td class="pf-cell">100%</td><td>Varies</td><td>Good</td><td>Variable</td><td>Low &ndash; Medium</td></tr>
+          <tr><td>24/7 availability</td><td class="pf-cell">Yes</td><td>No</td><td>No</td><td>No</td><td>Yes</td></tr>
+          <tr><td>Voice AI</td><td class="pf-cell">Included</td><td>No</td><td>$300+/mo extra</td><td>No</td><td>No</td></tr>
+          <tr><td>Newsletter</td><td class="pf-cell">Included</td><td>$400+/mo</td><td>Included</td><td>Extra hire</td><td>Some</td></tr>
+          <tr><td>HD images</td><td class="pf-cell">30/mo</td><td>$800+/mo</td><td>Included</td><td>Extra hire</td><td>Some</td></tr>
+          <tr><td>Analytics</td><td class="pf-cell">Real-time</td><td>Manual</td><td>Monthly</td><td>Varies</td><td>Basic</td></tr>
+          <tr><td>Contracts</td><td class="pf-cell">None</td><td>Usually</td><td>6 &ndash; 12 mo</td><td>Employment</td><td>Monthly</td></tr>
+          <tr><td>Scalability</td><td class="pf-cell">Instant</td><td>Weeks</td><td>Months</td><td>Months</td><td>Limited</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- INTEGRATION ECOSYSTEM -->
+<section>
+  <div class="wrap">
+    <div class="s-label">Integrations</div>
+    <h2 class="s-title">Connected to Your Entire Stack</h2>
+    <p class="s-desc">ProFlow connects to 15+ platforms and services, automating your workflow from creation to distribution to analytics.</p>
+
+    <div class="int-grid">
+      <div class="int-item"><div class="ico">&#128222;</div><div class="name">Twilio</div></div>
+      <div class="int-item"><div class="ico">&#127908;</div><div class="name">ElevenLabs</div></div>
+      <div class="int-item"><div class="ico">&#128179;</div><div class="name">Stripe</div></div>
+      <div class="int-item"><div class="ico">&#9889;</div><div class="name">Supabase</div></div>
+      <div class="int-item"><div class="ico">&#128232;</div><div class="name">Beehiiv</div></div>
+      <div class="int-item"><div class="ico">&#127760;</div><div class="name">WordPress</div></div>
+      <div class="int-item"><div class="ico">&#128188;</div><div class="name">LinkedIn</div></div>
+      <div class="int-item"><div class="ico">&#120143;</div><div class="name">Twitter / X</div></div>
+      <div class="int-item"><div class="ico">&#128247;</div><div class="name">Instagram</div></div>
+      <div class="int-item"><div class="ico">&#128077;</div><div class="name">Facebook</div></div>
+      <div class="int-item"><div class="ico">&#128204;</div><div class="name">Pinterest</div></div>
+      <div class="int-item"><div class="ico">&#127916;</div><div class="name">TikTok</div></div>
+      <div class="int-item"><div class="ico">&#128200;</div><div class="name">Google Analytics</div></div>
+      <div class="int-item"><div class="ico">&#129302;</div><div class="name">Claude AI</div></div>
+      <div class="int-item"><div class="ico">&#127912;</div><div class="name">DALL-E</div></div>
+      <div class="int-item"><div class="ico">&#128270;</div><div class="name">Ahrefs</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MONTHLY DELIVERABLES -->
+<section>
+  <div class="wrap">
+    <div class="s-label">Monthly Deliverables</div>
+    <h2 class="s-title">What You Receive Every Single Month</h2>
+    <p class="s-desc">Every ProFlow Growth subscription delivers a full-scale marketing operation, published on schedule without you lifting a finger.</p>
+
+    <div class="del-grid">
+      <div class="del-card">
+        <div class="del-ico">&#128221;</div>
+        <div>
+          <h4>30 SEO Blog Posts</h4>
+          <p>Original, keyword-optimized articles published daily to your site. Each post is scored for SEO and tailored to your brand voice.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128241;</div>
+        <div>
+          <h4>180+ Social Media Posts</h4>
+          <p>Across 6 platforms: LinkedIn, X, Instagram, Facebook, Pinterest, and TikTok. Scheduled daily with hashtag research.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#127912;</div>
+        <div>
+          <h4>30 HD Images</h4>
+          <p>DALL-E 3 quality blog headers, social graphics, and visual content. Matched to your brand palette and style guidelines.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128232;</div>
+        <div>
+          <h4>4 Email Newsletters</h4>
+          <p>Weekly newsletters with curated content, performance highlights, and subscriber growth. Sent via Beehiiv integration.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128202;</div>
+        <div>
+          <h4>4 Weekly Performance Reports</h4>
+          <p>Detailed analytics covering traffic, rankings, social engagement, email metrics, and AI phone call summaries.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128222;</div>
+        <div>
+          <h4>24/7 AI Phone Receptionist</h4>
+          <p>Never miss a call. AI-powered receptionist answers, qualifies leads, books appointments, and transcribes voicemails.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128200;</div>
+        <div>
+          <h4>Real-Time Analytics Dashboard</h4>
+          <p>Live performance metrics for every channel. Track organic traffic, keyword rankings, social reach, and conversion rates.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128197;</div>
+        <div>
+          <h4>Content Calendar</h4>
+          <p>Full month planned in advance. Review upcoming topics, approve or adjust, and always know what is publishing next.</p>
+        </div>
+      </div>
+      <div class="del-card">
+        <div class="del-ico">&#128269;</div>
+        <div>
+          <h4>SEO Optimization on All Content</h4>
+          <p>Every piece of content is optimized for search: meta tags, internal linking, schema markup, keyword density, and readability.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="del-value">
+      <div class="est">Estimated value of these services:</div>
+      <div class="big">$9,800+/mo</div>
+      <div class="pay">You pay: $297/mo</div>
+    </div>
+  </div>
+</section>
+
+<!-- BOTTOM CTA -->
+<section class="bottom-cta">
+  <div class="wrap">
+    <div class="dynamic-save">Start saving <span id="cta-savings">$13,503</span>/month today</div>
+
+    <div class="plans">
+      <div class="plan">
+        <div class="plan-name">Starter</div>
+        <div class="plan-price">$97</div>
+        <div class="plan-per">per month</div>
+        <ul class="plan-features">
+          <li>30 SEO blog posts / month</li>
+          <li>3 social media platforms</li>
+          <li>30 HD images</li>
+          <li>Brand voice matching</li>
+          <li>Content calendar</li>
+          <li>Weekly performance reports</li>
+        </ul>
+        <a href="/activate/" class="plan-btn plan-btn-secondary">Get Started &rarr;</a>
+      </div>
+
+      <div class="plan featured">
+        <div class="plan-badge">Most Popular</div>
+        <div class="plan-name">Growth</div>
+        <div class="plan-price">$297</div>
+        <div class="plan-per">per month</div>
+        <ul class="plan-features">
+          <li>Everything in Starter</li>
+          <li>6 social media platforms</li>
+          <li>Weekly newsletters</li>
+          <li>24/7 AI receptionist &amp; sales bot</li>
+          <li>Real-time analytics dashboard</li>
+          <li>SEO ranking tracker</li>
+          <li>Subscriber &amp; lead management</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="/activate/" class="plan-btn plan-btn-accent">Get Started &rarr;</a>
+      </div>
+
+      <div class="plan">
+        <div class="plan-name">Agency</div>
+        <div class="plan-price">$497</div>
+        <div class="plan-per">per month</div>
+        <ul class="plan-features">
+          <li>Everything in Growth</li>
+          <li>White-label portal</li>
+          <li>Custom integrations &amp; API</li>
+          <li>Long-form guides (2,000+ words)</li>
+          <li>Carousel / Reel creation</li>
+          <li>A/B testing &amp; ad creatives</li>
+          <li>Dedicated account manager</li>
+          <li>AI support bot</li>
+        </ul>
+        <a href="/activate/" class="plan-btn plan-btn-primary">Get Started &rarr;</a>
+      </div>
+    </div>
+
+    <p class="cta-note">14-day delivery guarantee. No contracts. Cancel anytime.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-copy">&copy; 2020&ndash;2026 ProFlow LLC. All rights reserved.</div>
+      <div class="footer-links">
+        <a href="/">Home</a>
+        <a href="/proflow/">ProFlow</a>
+        <a href="/pricing/">Pricing</a>
+        <a href="/demo/">Demo</a>
+        <a href="/blog/">Blog</a>
+        <a href="/legal/">Legal</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ROI Calculator
+function calcROI(){
+  var w=+document.getElementById('sl-writer').value,
+      s=+document.getElementById('sl-social').value,
+      d=+document.getElementById('sl-design').value,
+      e=+document.getElementById('sl-email').value,
+      p=+document.getElementById('sl-phone').value;
+  var total=w+s+d+e+p;
+  var pf=297;
+  var saving=total-pf;
+  var annual=saving*12;
+  var roi=total>0?Math.round(((total-pf)/pf)*100):0;
+  var mult=total>0?Math.round(total/pf):0;
+
+  document.getElementById('val-writer').textContent='$'+w.toLocaleString();
+  document.getElementById('val-social').textContent='$'+s.toLocaleString();
+  document.getElementById('val-design').textContent='$'+d.toLocaleString();
+  document.getElementById('val-email').textContent='$'+e.toLocaleString();
+  document.getElementById('val-phone').textContent='$'+p.toLocaleString();
+
+  document.getElementById('roi-current').textContent='$'+total.toLocaleString();
+  document.getElementById('roi-proflow').textContent='$297/mo';
+
+  if(saving<0) saving=0;
+  if(annual<0) annual=0;
+  if(roi<0) roi=0;
+
+  document.getElementById('roi-monthly').textContent='$'+saving.toLocaleString();
+  document.getElementById('roi-annual').textContent='$'+annual.toLocaleString();
+  document.getElementById('roi-pct').textContent=roi.toLocaleString()+'%';
+  document.getElementById('roi-team').textContent=mult+'x';
+
+  // Bars
+  var maxVal=Math.max(total,pf,1);
+  document.getElementById('roi-bar-you').style.width=Math.round((total/maxVal)*100)+'%';
+  document.getElementById('roi-bar-pf').style.width=Math.max(Math.round((pf/maxVal)*100),1)+'%';
+
+  // Quip
+  if(mult>1){
+    document.getElementById('roi-quip').textContent='"That\'s like getting a '+mult+'-person team for less than one freelancer."';
+  } else {
+    document.getElementById('roi-quip').textContent='"Adjust the sliders above to see your potential savings."';
+  }
+
+  // CTA
+  document.getElementById('cta-savings').textContent='$'+saving.toLocaleString();
+}
+
+// Gallery Tabs
+function showTab(id){
+  document.querySelectorAll('.tab-panel').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.tab-btn').forEach(function(b){b.classList.remove('active')});
+  document.getElementById('tab-'+id).classList.add('active');
+  // highlight button
+  var btns=document.querySelectorAll('.tab-btn');
+  var names=['blog','social','images','newsletters','reports','voice'];
+  for(var i=0;i<btns.length;i++){
+    if(names[i]===id) btns[i].classList.add('active');
+  }
+}
+
+// Close mobile nav on link click
+document.querySelectorAll('.n-links a').forEach(function(a){
+  a.addEventListener('click',function(){
+    document.querySelector('.n-links').classList.remove('open');
+  });
+});
+
+// Init
+calcROI();
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body>
+</html>

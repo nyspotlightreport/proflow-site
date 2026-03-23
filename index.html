@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ProFlow — 15 AI Agencies. One Platform. Replace Any Team.</title>
+<meta name="description" content="15 enterprise-grade AI agencies: content, marketing, sales, HR, PR, web dev, and more. Starting at $47/mo. Bundle and save up to 55%.">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#faf9f6;--paper:#fff;--ink:#0f0f0f;--g500:#6b6b6b;--g300:#a3a3a3;--g100:#e5e5e5;--accent:#9e7c0c;--green:#16793a;--serif:'Playfair Display',serif;--sans:'DM Sans',sans-serif}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+
+nav{background:var(--paper);border-bottom:1px solid var(--g100);padding:0 clamp(16px,4vw,48px);height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px)}
+.nl{font-family:var(--serif);font-size:20px;font-weight:700}.nl span{color:var(--accent)}
+.nr a{font-size:12px;font-weight:600;color:var(--g500);margin-left:20px}
+.wrap{max-width:1100px;margin:0 auto;padding:0 clamp(16px,4vw,48px)}
+
+.hero{padding:80px 0 64px;text-align:center}
+.hero-tag{font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.hero h1{font-family:var(--serif);font-size:clamp(32px,5vw,56px);font-weight:800;line-height:1.08;margin-bottom:20px;max-width:800px;margin-left:auto;margin-right:auto}
+.hero h1 em{font-style:italic;color:var(--accent)}
+.hero-sub{font-size:20px;color:var(--g500);max-width:640px;margin:0 auto 32px;line-height:1.6}
+.hero-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{display:inline-block;padding:15px 36px;border-radius:6px;font-size:15px;font-weight:700}
+.btn-gold{background:var(--accent);color:#fff}.btn-gold:hover{background:#7d6209}
+.btn-dark{background:var(--ink);color:#fff}.btn-dark:hover{background:#333}
+.btn-outline{border:1px solid var(--g100);color:var(--ink)}.btn-outline:hover{border-color:var(--g300)}
+
+.stats{display:flex;justify-content:center;gap:48px;padding:32px 0;flex-wrap:wrap}
+.stat{text-align:center}.stat-num{font-family:var(--serif);font-size:36px;font-weight:800;color:var(--accent)}.stat-label{font-size:13px;color:var(--g500);margin-top:2px}
+
+.agencies{padding:48px 0}
+.agencies h2{font-family:var(--serif);font-size:32px;font-weight:700;text-align:center;margin-bottom:8px}
+.agencies-sub{text-align:center;font-size:16px;color:var(--g500);margin-bottom:32px}
+.agency-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:16px}
+.a-card{background:var(--paper);border:1px solid var(--g100);border-radius:8px;padding:24px;transition:border-color .15s}
+.a-card:hover{border-color:var(--accent)}
+.a-head{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.a-icon{font-size:24px}.a-name{font-family:var(--serif);font-size:17px;font-weight:700}
+.a-desc{font-size:14px;color:var(--g500);line-height:1.5;margin-bottom:12px}
+.a-price{font-size:13px;color:var(--ink)}.a-price strong{color:var(--accent);font-family:var(--serif);font-size:18px}
+.a-link{display:inline-block;margin-top:10px;font-size:13px;color:var(--accent);font-weight:600}
+
+.cta-section{background:var(--ink);border-radius:12px;padding:64px 40px;text-align:center;margin:48px auto;max-width:900px;color:#fff}
+.cta-section h2{font-family:var(--serif);font-size:32px;font-weight:700;margin-bottom:12px}
+.cta-section p{color:rgba(255,255,255,.5);font-size:16px;margin-bottom:24px}
+.cta-section .btn-gold{font-size:18px;padding:18px 48px}
+.cta-section .sub{color:rgba(255,255,255,.3);font-size:12px;margin-top:16px}
+
+.how{padding:48px 0}
+.how h2{font-family:var(--serif);font-size:28px;font-weight:700;text-align:center;margin-bottom:32px}
+.how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.how-step{text-align:center;padding:24px}
+.how-num{font-family:var(--serif);font-size:48px;font-weight:800;color:var(--accent);line-height:1}
+.how-step h3{font-size:16px;font-weight:700;margin:8px 0 4px}
+.how-step p{font-size:14px;color:var(--g500);line-height:1.5}
+
+footer{border-top:1px solid var(--g100);padding:24px;text-align:center;font-size:11px;color:var(--g300);margin-top:48px}
+footer a{color:var(--accent);margin:0 8px}
+
+@media(max-width:768px){.agency-grid{grid-template-columns:1fr}.how-grid{grid-template-columns:1fr}.stats{gap:24px}}
+</style>
+</head>
+<body>
+<nav><a href="/" class="nl">Pro<span>Flow</span></a><div class="nr"><a href="/services/">Services</a><a href="/demo/">Demo</a><a href="/capabilities/">Capabilities</a><a href="/store/">Pricing</a><a href="/login/">Sign In</a></div></nav>
+
+<div class="wrap">
+<div class="hero">
+<div class="hero-tag">AI Agency Marketplace</div>
+<h1>15 enterprise-grade agencies. <em>One platform.</em></h1>
+<p class="hero-sub">Content, marketing, sales, HR, PR, web development — every service your business needs, powered by AI. Subscribe monthly, grab a day pass, or bundle and save up to 55%.</p>
+<div class="hero-btns">
+<a href="/services/" class="btn btn-gold">Explore All 15 Agencies →</a>
+<a href="/demo/" class="btn btn-dark">Watch the Demo</a>
+<a href="tel:+16318929817" class="btn btn-outline">Call Our AI — (631) 892-9817</a>
+</div>
+</div>
+
+<div class="stats">
+<div class="stat"><div class="stat-num">15</div><div class="stat-label">AI Agencies</div></div>
+<div class="stat"><div class="stat-num">$47</div><div class="stat-label">Starting Price</div></div>
+<div class="stat"><div class="stat-num">55%</div><div class="stat-label">Max Bundle Savings</div></div>
+<div class="stat"><div class="stat-num">24/7</div><div class="stat-label">Always Running</div></div>
+</div>
+
+<div class="agencies">
+<h2>Every agency your business needs</h2>
+<p class="agencies-sub">Each one is a standalone service. Subscribe to one, a few, or all of them.</p>
+<div class="agency-grid">
+<div class="a-card"><div class="a-head"><span class="a-icon">📝</span><span class="a-name">Content Creation Studio</span></div><div class="a-desc">30 SEO blog posts/month in your brand voice. Replaces $2K-4K/mo freelancers.</div><div class="a-price">LITE <strong>$67</strong>/mo · FULL <strong>$297</strong>/mo</div><a href="/services/content-studio/" class="a-link">Learn More →</a></div>
+<div class="a-card"><div class="a-head"><span class="a-icon">📱</span><span class="a-name">Social Media Management</span></div><div class="a-desc">Daily posts on 6 platforms with engagement tracking. Replaces $1.5K-3K/mo agencies.</div><div class="a-price">LITE <strong>$67</strong>/mo · FULL <strong>$297</strong>/mo</div><a href="/services/social-media/" class="a-link">Learn More →</a></div>
+<div class="a-card"><div class="a-head"><span class="a-icon">📈</span><span class="a-name">Marketing Agency</span></div><div class="a-desc">Full-funnel strategy, campaigns, and analytics. Replaces $3K-8K/mo agencies.</div><div class="a-price">LITE <strong>$97</strong>/mo · FULL <strong>$397</strong>/mo</div><a href="/services/marketing/" class="a-link">Learn More →</a></div>
+<div class="a-card"><div class="a-head"><span class="a-icon">💼</span><span class="a-name">Full Cycle Sales Team</span></div><div class="a-desc">Lead gen, outreach, qualification, and pipeline management. Replaces $5K-15K/mo teams.</div><div class="a-price">LITE <strong>$97</strong>/mo · FULL <strong>$497</strong>/mo</div><a href="/services/sales-team/" class="a-link">Learn More →</a></div>
+<div class="a-card"><div class="a-head"><span class="a-icon">📞</span><span class="a-name">Voice AI & Appointments</span></div><div class="a-desc">24/7 AI receptionist, sales bots, and appointment booking. Replaces $1.5K-3K/mo.</div><div class="a-price">LITE <strong>$57</strong>/mo · FULL <strong>$247</strong>/mo</div><a href="/services/voice-ai/" class="a-link">Learn More →</a></div>
+<div class="a-card"><div class="a-head"><span class="a-icon">🌐</span><span class="a-name">Website Development</span></div><div class="a-desc">Full-stack builds, landing pages, e-commerce, and maintenance. Replaces $3K-10K/mo.</div><div class="a-price">LITE <strong>$97</strong>/mo · FULL <strong>$497</strong>/mo</div><a href="/services/web-development/" class="a-link">Learn More →</a></div>
+</div>
+<div style="text-align:center;margin-top:24px"><a href="/services/" style="color:var(--accent);font-size:15px;font-weight:700">See all 15 agencies →</a></div>
+</div>
+
+<div class="how">
+<h2>How it works</h2>
+<div class="how-grid">
+<div class="how-step"><div class="how-num">1</div><h3>Pick your agencies</h3><p>Choose one, a few, or bundle all 15. LITE for basics, FULL for everything, or a Day Pass for one-time access.</p></div>
+<div class="how-step"><div class="how-num">2</div><h3>Onboard in 5 minutes</h3><p>Answer a quick questionnaire about your brand, goals, and preferences. We handle everything from there.</p></div>
+<div class="how-step"><div class="how-num">3</div><h3>Watch it work</h3><p>Your AI agencies start delivering within 48 hours. Track everything from your real-time dashboard.</p></div>
+</div>
+</div>
+
+<div class="cta-section">
+<h2>Your entire business operations team — for less than one hire</h2>
+<p>All 15 agencies, bundled together, starting at $497/month. That replaces $40,000+/month in traditional firm costs.</p>
+<a href="/services/" class="btn btn-gold">Explore All Agencies →</a>
+<div class="sub">14-day delivery guarantee · No contracts · Cancel anytime</div>
+</div>
+</div>
+
+<footer>© 2024–2026 ProFlow · <a href="/services/">Services</a> · <a href="/demo/">Demo</a> · <a href="/capabilities/">Capabilities</a> · <a href="/store/">Pricing</a> · <a href="/login/">Sign In</a></footer>
+</body>
+</html>

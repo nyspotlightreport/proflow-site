@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tier 1 Activation — NYSR</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#0D1B2A;color:#fff;min-height:100vh;padding:32px 20px;}
+.wrap{max-width:540px;margin:0 auto;}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;}
+.logo{color:#C9A84C;font-size:17px;font-weight:800;}
+.total{font-size:13px;color:#8fa8c0;}
+.step{background:#111d2e;border:1.5px solid #1e3050;border-radius:14px;padding:22px 24px;margin-bottom:14px;transition:border .2s;}
+.step.complete{border-color:#27500A;opacity:.7;}
+.step.active{border-color:#C9A84C;}
+.step-head{display:flex;align-items:center;margin-bottom:14px;}
+.num{width:32px;height:32px;border-radius:50%;background:#C9A84C;color:#0D1B2A;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
+.step.complete .num{background:#27500A;color:#9DE04A;}
+.step-name{font-size:15px;font-weight:700;color:#fff;margin-left:12px;flex:1;}
+.step-cost{color:#C9A84C;font-size:12px;font-weight:700;}
+.step-desc{font-size:13px;color:#8fa8c0;line-height:1.6;margin-bottom:16px;}
+.step-impact{font-size:12px;color:#4AE8C8;margin-bottom:16px;display:flex;align-items:center;gap:6px;}
+.step-actions{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.btn-signup{background:#C9A84C;color:#0D1B2A;padding:10px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:800;text-align:center;display:block;}
+.btn-secret{background:#1e3050;color:#C9A84C;border:1px solid #2a4060;padding:10px;border-radius:8px;text-decoration:none;font-size:13px;font-weight:700;text-align:center;display:block;}
+.secret-name{background:#0D1B2A;border:1px solid #2a4060;border-radius:6px;padding:8px 12px;font-family:monospace;font-size:13px;color:#C9A84C;margin:12px 0 4px;display:flex;align-items:center;justify-content:space-between;}
+.copy-pill{background:#C9A84C;color:#0D1B2A;border:none;padding:3px 8px;border-radius:4px;font-size:10px;font-weight:800;cursor:pointer;}
+.mark-done{width:100%;padding:10px;background:#27500A;color:#9DE04A;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;margin-top:10px;display:none;}
+.progress-bar{height:4px;background:#1e3050;border-radius:2px;margin-bottom:28px;overflow:hidden;}
+.progress-fill{height:100%;background:#C9A84C;transition:width .4s;border-radius:2px;}
+.summary{background:#1a3320;border:1px solid #27500A;border-radius:10px;padding:16px 18px;margin-top:20px;display:none;}
+.summary h3{color:#9DE04A;font-size:14px;margin-bottom:8px;}
+.summary p{font-size:12px;color:#5a9a6a;line-height:1.6;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="topbar">
+  <div class="logo">NYSR — Tier 1 Activation</div>
+  <div class="total">$220/mo → $1,940+/mo</div>
+</div>
+
+<div class="progress-bar"><div class="progress-fill" id="pbar" style="width:0%"></div></div>
+
+<!-- STEP 1: APOLLO -->
+<div class="step active" id="s1">
+  <div class="step-head">
+    <div class="num" id="n1">1</div>
+    <div class="step-name">Apollo.io Pro</div>
+    <div class="step-cost">$99/mo</div>
+  </div>
+  <div class="step-desc">Unlocks 10,000 email exports/month. Sales Agent scales from 20 → 200 emails/day. At 10% reply + 5% close = 1 sale/day. One sale at $297 pays for 3 months.</div>
+  <div class="step-impact">↑ 200 personalized emails/day vs 20 today</div>
+  <div class="step-actions">
+    <a href="https://app.apollo.io/#/settings/billing" class="btn-signup" target="_blank">1. Sign Up →</a>
+    <a href="https://github.com/nyspotlightreport/sct-agency-bots/settings/secrets/actions/new" class="btn-secret" target="_blank">3. Add Secret →</a>
+  </div>
+  <div class="secret-name">
+    <span>APOLLO_API_KEY</span>
+    <button class="copy-pill" onclick="navigator.clipboard.writeText('APOLLO_API_KEY');this.textContent='✓'">Copy</button>
+  </div>
+  <div style="font-size:11px;color:#555;margin-bottom:8px;">After signup: apollo.io → Settings → API Keys → copy</div>
+  <button class="mark-done" id="done1" onclick="complete(1)">✅ Done — Secret Added</button>
+  <div style="margin-top:10px;">
+    <button onclick="document.getElementById('done1').style.display='block'" style="background:none;border:1px solid #2a4060;color:#8fa8c0;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;">I signed up, show mark done</button>
+  </div>
+</div>
+
+<!-- STEP 2: AHREFS -->
+<div class="step" id="s2">
+  <div class="step-head">
+    <div class="num" id="n2">2</div>
+    <div class="step-name">Ahrefs Starter</div>
+    <div class="step-cost">$99/mo</div>
+  </div>
+  <div class="step-desc">Real keyword data fed to Content Agent daily. Every blog post targets verified search volume instead of guessing. SEO traffic improves 3-5x within 60 days.</div>
+  <div class="step-impact">↑ 3-5x better SEO targeting on every post</div>
+  <div class="step-actions">
+    <a href="https://ahrefs.com/pricing" class="btn-signup" target="_blank">1. Sign Up →</a>
+    <a href="https://github.com/nyspotlightreport/sct-agency-bots/settings/secrets/actions/new" class="btn-secret" target="_blank">3. Add Secret →</a>
+  </div>
+  <div class="secret-name">
+    <span>AHREFS_API_KEY</span>
+    <button class="copy-pill" onclick="navigator.clipboard.writeText('AHREFS_API_KEY');this.textContent='✓'">Copy</button>
+  </div>
+  <div style="font-size:11px;color:#555;margin-bottom:8px;">After signup: ahrefs.com → Account → API → generate key</div>
+  <button class="mark-done" id="done2" onclick="complete(2)">✅ Done — Secret Added</button>
+  <div style="margin-top:10px;">
+    <button onclick="document.getElementById('done2').style.display='block'" style="background:none;border:1px solid #2a4060;color:#8fa8c0;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;">I signed up, show mark done</button>
+  </div>
+</div>
+
+<!-- STEP 3: ELEVENLABS -->
+<div class="step" id="s3">
+  <div class="step-head">
+    <div class="num" id="n3">3</div>
+    <div class="step-name">ElevenLabs Creator</div>
+    <div class="step-cost">$22/mo</div>
+  </div>
+  <div class="step-desc">Auto-voices every YouTube Short. Voiced = 3x watch time → algorithm pushes the video → free organic traffic from YouTube forever. 30k chars/month = 30+ voiced videos.</div>
+  <div class="step-impact">↑ 3x YouTube watch time → algorithm boost</div>
+  <div class="step-actions">
+    <a href="https://elevenlabs.io/pricing" class="btn-signup" target="_blank">1. Sign Up →</a>
+    <a href="https://github.com/nyspotlightreport/sct-agency-bots/settings/secrets/actions/new" class="btn-secret" target="_blank">3. Add Secret →</a>
+  </div>
+  <div class="secret-name">
+    <span>ELEVENLABS_API_KEY</span>
+    <button class="copy-pill" onclick="navigator.clipboard.writeText('ELEVENLABS_API_KEY');this.textContent='✓'">Copy</button>
+  </div>
+  <div style="font-size:11px;color:#555;margin-bottom:8px;">After signup: elevenlabs.io → Profile → API Key</div>
+  <button class="mark-done" id="done3" onclick="complete(3)">✅ Done — Secret Added</button>
+  <div style="margin-top:10px;">
+    <button onclick="document.getElementById('done3').style.display='block'" style="background:none;border:1px solid #2a4060;color:#8fa8c0;padding:6px 12px;border-radius:6px;font-size:11px;cursor:pointer;">I signed up, show mark done</button>
+  </div>
+</div>
+
+<div class="summary" id="summary">
+  <h3>🚀 Tier 1 Fully Active</h3>
+  <p>All three systems are live. Starting now:<br><br>
+  • Sales Agent sending 200 personalized emails/day<br>
+  • Content Agent using real Ahrefs keyword data<br>
+  • Every YouTube Short gets voiced automatically<br><br>
+  Next milestone: first ProFlow or DFY client closes. Expected: 7-14 days.</p>
+</div>
+
+</div>
+<script>
+const done = new Set(JSON.parse(localStorage.getItem('t1_done')||'[]'));
+done.forEach(i=>applyDone(i));
+updateBar();
+
+function applyDone(i){
+  const s=document.getElementById('s'+i);
+  if(s){s.classList.add('complete');s.classList.remove('active');}
+  const n=document.getElementById('n'+i);
+  if(n) n.textContent='✓';
+}
+function complete(i){
+  done.add(i);
+  localStorage.setItem('t1_done',JSON.stringify([...done]));
+  applyDone(i);
+  updateBar();
+  if(done.size===3) document.getElementById('summary').style.display='block';
+}
+function updateBar(){
+  document.getElementById('pbar').style.width=(done.size/3*100)+'%';
+}
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body>
+</html>

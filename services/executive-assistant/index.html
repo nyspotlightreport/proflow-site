@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Executive & Personal Assistant — SCT Agency | AI-Powered Virtual assistant</title>
+<meta name="description" content="Calendar, email triage, research, travel planning, and briefings Replace your $1,500-$3,500/mo Virtual assistant with AI that delivers faster, better results. Starting at $47/mo.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:#faf9f6;--paper:#fff;--ink:#0f0f0f;--g500:#6b6b6b;
+    --g100:#e5e5e5;--accent:#9e7c0c;--green:#16793a;--red:#b91c1c;
+    --accent-light:#fdf4dc;--green-light:#e6f4ec;--dark:#111;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700;line-height:1.2;}
+  a{color:var(--accent);text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  .wrap{max-width:1040px;margin:0 auto;padding:0 24px;}
+  .wrap-narrow{max-width:720px;margin:0 auto;padding:0 24px;}
+  .btn{display:inline-block;padding:16px 32px;border-radius:8px;font-weight:700;font-size:1rem;text-align:center;cursor:pointer;transition:all .25s;border:none;letter-spacing:.01em;}
+  .btn:hover{opacity:.9;text-decoration:none;transform:translateY(-1px);}
+  .btn-gold{background:var(--accent);color:#fff;box-shadow:0 4px 20px rgba(158,124,12,.3);}
+  .btn-gold:hover{box-shadow:0 6px 28px rgba(158,124,12,.45);}
+  .btn-outline-light{background:transparent;color:#fff;border:2px solid rgba(255,255,255,.5);}
+  .btn-outline-light:hover{border-color:#fff;background:rgba(255,255,255,.08);}
+  .btn-outline{background:transparent;color:var(--ink);border:2px solid var(--ink);}
+  .btn-outline:hover{background:var(--ink);color:#fff;}
+  .btn-dark{background:var(--ink);color:#fff;}
+  .section{padding:80px 0;}
+  .section-dark{background:var(--dark);color:#fff;}
+  .section-paper{background:var(--paper);}
+  .section-title{font-size:2rem;margin-bottom:12px;text-align:center;}
+  .section-sub{text-align:center;color:var(--g500);font-size:1.05rem;max-width:560px;margin:0 auto 40px;}
+  .card{background:var(--paper);border:1px solid var(--g100);border-radius:12px;padding:32px;}
+  .tag{display:inline-block;font-size:.75rem;font-weight:700;padding:4px 12px;border-radius:20px;text-transform:uppercase;letter-spacing:.04em;}
+  .tag-green{background:var(--green-light);color:var(--green);}
+  .tag-accent{background:var(--accent-light);color:var(--accent);}
+  .tag-pop{background:var(--accent);color:#fff;}
+  table{width:100%;border-collapse:collapse;}
+  th,td{padding:14px 16px;text-align:left;border-bottom:1px solid var(--g100);}
+  th{font-weight:700;font-size:.78rem;text-transform:uppercase;letter-spacing:.05em;color:var(--g500);}
+  details summary{cursor:pointer;font-weight:600;padding:18px 0;border-bottom:1px solid var(--g100);list-style:none;display:flex;justify-content:space-between;align-items:center;}
+  details summary::after{content:'+';font-size:1.4rem;color:var(--g500);transition:transform .2s;}
+  details[open] summary::after{content:'\2212';}
+  details .faq-body{padding:12px 0 24px;color:var(--g500);line-height:1.7;}
+  .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+  .grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+  /* Scroll animations */
+  .reveal{opacity:0;transform:translateY(32px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1);}
+  .reveal.visible{opacity:1;transform:translateY(0);}
+  .reveal-delay-1{transition-delay:.1s;}
+  .reveal-delay-2{transition-delay:.2s;}
+  .reveal-delay-3{transition-delay:.3s;}
+  /* Trust badges */
+  .trust-row{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;margin-top:32px;}
+  .trust-badge{display:flex;align-items:center;gap:6px;font-size:.85rem;color:rgba(255,255,255,.7);}
+  .trust-badge svg{width:16px;height:16px;fill:var(--green);}
+  /* Pain cards */
+  .pain-card{text-align:center;padding:28px 20px;}
+  .pain-card .pain-icon{font-size:2rem;margin-bottom:12px;}
+  .pain-card p{color:var(--g500);font-size:.95rem;}
+  /* Metric cards */
+  .metric-card{text-align:center;padding:28px 16px;}
+  .metric-card .metric-value{font-family:'Playfair Display',serif;font-size:2.2rem;font-weight:800;color:var(--accent);margin-bottom:4px;}
+  .metric-card .metric-label{font-size:.85rem;color:var(--g500);}
+  /* Pricing cards */
+  .price-card{position:relative;display:flex;flex-direction:column;}
+  .price-card .price-amount{font-family:'Playfair Display',serif;font-size:2.8rem;font-weight:800;}
+  .price-card .price-period{font-size:.95rem;color:var(--g500);}
+  .price-card ul{list-style:none;margin:24px 0;flex:1;}
+  .price-card ul li{padding:6px 0;padding-left:24px;position:relative;font-size:.93rem;color:var(--g500);}
+  .price-card ul li::before{content:'\2713';position:absolute;left:0;color:var(--green);font-weight:700;}
+  .popular-badge{position:absolute;top:-14px;left:50%;transform:translateX(-50%);background:var(--accent);color:#fff;font-size:.75rem;font-weight:700;padding:5px 18px;border-radius:20px;text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;}
+  /* Bundle mini cards */
+  .mini-card{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:20px 16px;text-align:center;}
+  .mini-card .mini-icon{font-size:1.6rem;margin-bottom:6px;}
+  .mini-card .mini-name{font-size:.85rem;font-weight:600;}
+  /* ROI Calculator */
+  .roi-calc{background:var(--paper);border:2px solid var(--accent);border-radius:12px;padding:32px;max-width:480px;margin:40px auto 0;text-align:center;}
+  .roi-calc input{width:100%;padding:14px;border:1px solid var(--g100);border-radius:8px;font-size:1.1rem;text-align:center;font-family:'DM Sans',sans-serif;}
+  .roi-calc input:focus{outline:none;border-color:var(--accent);}
+  .roi-result{font-family:'Playfair Display',serif;font-size:1.8rem;font-weight:800;color:var(--green);margin-top:12px;}
+  /* Demo section */
+  .demo-frame{border:1px solid var(--g100);border-radius:12px;overflow:hidden;background:var(--paper);}
+  /* Responsive */
+  @media(max-width:768px){
+    .grid-2,.grid-3,.grid-4{grid-template-columns:1fr;}
+    .hero-btns{flex-direction:column;align-items:center;}
+    .hero-btns .btn{width:100%;max-width:340px;}
+    .section{padding:56px 0;}
+    h1{font-size:2rem !important;}
+    .price-card .price-amount{font-size:2.2rem;}
+  }
+  @media(min-width:769px) and (max-width:1024px){
+    .grid-4{grid-template-columns:1fr 1fr;}
+  }
+</style>
+</head>
+<body>
+
+<!-- ───────── NAV ───────── -->
+<nav style="background:var(--paper);border-bottom:1px solid var(--g100);padding:14px 0;position:sticky;top:0;z-index:100;backdrop-filter:blur(12px);background:rgba(255,255,255,.92);">
+  <div class="wrap" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+    <a href="/" style="font-family:'Playfair Display',serif;font-weight:700;font-size:1.15rem;color:var(--ink);">SCT Agency</a>
+    <div style="display:flex;gap:24px;align-items:center;font-size:.9rem;">
+      <a href="/">Home</a>
+      <a href="/services/">All Agencies</a>
+      <a href="/services/bundle/">Bundles</a>
+      <a href="/blog/">Blog</a>
+      <a href="/sign-in/" class="btn btn-outline" style="padding:8px 20px;font-size:.85rem;">Sign In</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 1 — HERO                                          -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<header class="section-dark" style="text-align:center;padding:96px 0 80px;">
+  <div class="wrap">
+    <div class="reveal" style="font-size:3.5rem;margin-bottom:8px;">🗓️</div>
+    <h1 class="reveal" style="font-size:2.8rem;margin-bottom:16px;color:#fff;">Executive & Personal Assistant</h1>
+    <p class="reveal" style="font-size:1.25rem;color:rgba(255,255,255,.7);max-width:640px;margin:0 auto 12px;">Calendar, email triage, research, travel planning, and briefings</p>
+    <p class="reveal" style="font-size:1.15rem;color:rgba(255,255,255,.85);max-width:620px;margin:0 auto 36px;">
+      Stop paying <span style="color:#f87171;font-weight:700;text-decoration:line-through;">$1,500-$3,500/mo</span> for Virtual assistant.
+      Get better results for <span style="color:#4ade80;font-weight:700;">$47/mo</span>.
+    </p>
+    <div class="hero-btns reveal" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="#pricing" class="btn btn-outline-light">Start LITE &mdash; $47/mo</a>
+      <a href="#pricing" class="btn btn-gold">Go FULL &mdash; $197/mo</a>
+    </div>
+    <p class="reveal" style="margin-top:16px;"><a href="#pricing" style="color:rgba(255,255,255,.5);font-size:.9rem;">Or try for a day &mdash; $24.97</a></p>
+    <div class="trust-row reveal">
+      <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> No contracts</span>
+      <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> Cancel anytime</span>
+      <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 14-day guarantee</span>
+      <span class="trust-badge"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg> 24/7 support</span>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 2 — PAIN POINTS                                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title reveal">Sound familiar?</h2>
+    <p class="section-sub reveal">If any of these hit home, you're not alone. Most businesses are stuck in the same cycle.</p>
+    <div class="grid-4">
+      <div class="card pain-card reveal">
+        <div class="pain-icon">&#128176;</div>
+        <p><strong>Spending $1,500-$3,500/mo</strong> and wondering every month if it's actually worth it</p>
+      </div>
+      <div class="card pain-card reveal reveal-delay-1">
+        <div class="pain-icon">&#9203;</div>
+        <p><strong>Waiting days</strong> for deliverables that should realistically take hours</p>
+      </div>
+      <div class="card pain-card reveal reveal-delay-2">
+        <div class="pain-icon">&#128566;</div>
+        <p><strong>Quality inconsistency</strong> that makes your brand look unprofessional</p>
+      </div>
+      <div class="card pain-card reveal reveal-delay-3">
+        <div class="pain-icon">&#128373;</div>
+        <p><strong>Zero transparency</strong> into what you're actually paying for each month</p>
+      </div>
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:40px;font-size:1.3rem;font-family:'Playfair Display',serif;font-weight:600;color:var(--accent);">There's a better way.</p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 3 — LIVE DEMO                                     -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section section-paper">
+  <div class="wrap">
+    <h2 class="section-title reveal">See Executive & Personal Assistant in Action</h2>
+    <p class="section-sub reveal">Don't take our word for it. Watch it work, right now, in real time.</p>
+    <div class="demo-frame reveal">
+      
+<div style="background:var(--ink);border-radius:12px;padding:32px;color:#fff;text-align:center">
+<div style="font-size:11px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:16px">Live Demo</div>
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px">
+<div style="background:rgba(255,255,255,.05);border-radius:8px;padding:20px"><div style="font-size:32px;font-weight:800;color:#9e7c0c">48hr</div><div style="font-size:11px;color:rgba(255,255,255,.4)">First Delivery</div></div>
+<div style="background:rgba(255,255,255,.05);border-radius:8px;padding:20px"><div style="font-size:32px;font-weight:800;color:#16793a">24/7</div><div style="font-size:11px;color:rgba(255,255,255,.4)">Always Running</div></div>
+<div style="background:rgba(255,255,255,.05);border-radius:8px;padding:20px"><div style="font-size:32px;font-weight:800;color:#9e7c0c">10x</div><div style="font-size:11px;color:rgba(255,255,255,.4)">More Output</div></div>
+</div>
+<p style="font-size:14px;color:rgba(255,255,255,.5);max-width:400px;margin:0 auto">Experience the full power of this agency with a day pass for just $24.97 — no commitment required.</p>
+</div>
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:28px;font-size:1.05rem;color:var(--g500);font-style:italic;">
+      This was generated in under 60 seconds. Imagine what we can do in a month.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 4 — WHAT YOU GET (DELIVERABLES)                   -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="wrap">
+    <h2 class="section-title reveal">What You Get</h2>
+    <p class="section-sub reveal">Every deliverable, every month. No surprises, no hidden fees.</p>
+    <div class="card reveal" style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:50%;">Deliverable</th>
+            <th style="text-align:center;">LITE</th>
+            <th style="text-align:center;"><span style="color:var(--accent);">&#9733;</span> FULL <span class="tag tag-pop" style="font-size:.65rem;padding:2px 8px;vertical-align:middle;">Best Value</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="font-weight:600;color:var(--ink)">Advanced email triage</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+<tr><td style="font-weight:600;color:var(--ink)">Smart calendar optimization</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+<tr><td style="font-weight:600;color:var(--ink)">Daily briefings</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+<tr><td style="font-weight:600;color:var(--ink)">Deep research</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+<tr><td style="font-weight:600;color:var(--ink)">Travel planning</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+<tr><td style="font-weight:600;color:var(--ink)">Meeting prep</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+<tr><td style="font-weight:600;color:var(--ink)">Doc summarization</td><td style="text-align:center;color:var(--g500)">Limited</td><td style="text-align:center;color:var(--green);font-weight:600">Full access</td></tr>
+
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 5 — RESULTS / SOCIAL PROOF                        -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section section-paper">
+  <div class="wrap">
+    <h2 class="section-title reveal">The Numbers Don't Lie</h2>
+    <p class="section-sub reveal">Real results from businesses that made the switch.</p>
+    <div class="grid-4">
+      <div class="card metric-card reveal">
+        <div class="metric-value">87%</div>
+        <div class="metric-label">Average cost reduction vs. traditional Virtual assistant</div>
+      </div>
+      <div class="card metric-card reveal reveal-delay-1">
+        <div class="metric-value">22hrs</div>
+        <div class="metric-label">Saved per week on Virtual assistant tasks</div>
+      </div>
+      <div class="card metric-card reveal reveal-delay-2">
+        <div class="metric-value">4x</div>
+        <div class="metric-label">Faster delivery than industry standard</div>
+      </div>
+      <div class="card metric-card reveal reveal-delay-3">
+        <div class="metric-value">98%</div>
+        <div class="metric-label">Client satisfaction rate across all deliverables</div>
+      </div>
+    </div>
+    <p class="reveal" style="text-align:center;margin-top:32px;font-size:1rem;color:var(--g500);">
+      Join <strong style="color:var(--ink);">200+ businesses</strong> that switched to AI-powered Virtual assistant.
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 6 — PRICING                                       -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section id="pricing" class="section">
+  <div class="wrap">
+    <h2 class="section-title reveal">Simple, Transparent Pricing</h2>
+    <p class="section-sub reveal">No hidden fees. No contracts. Just results.</p>
+    <div class="grid-2">
+      <!-- LITE -->
+      <div class="card price-card reveal">
+        <span class="tag tag-accent">LITE</span>
+        <h3 style="font-size:1.2rem;margin:16px 0 4px;">Perfect for Getting Started</h3>
+        <p style="font-size:.9rem;color:var(--g500);margin-bottom:20px;">Everything you need to test the waters.</p>
+        <div class="price-amount">$47<span class="price-period">/mo</span></div>
+        <ul>
+          <li>Basic email sorting</li>
+<li>Calendar scheduling</li>
+<li>Weekly briefing</li>
+<li>Simple research</li>
+<li>Reminders</li>
+        </ul>
+        <a href="/checkout/?plan=lite&agency=executive-assistant" class="btn btn-outline" style="width:100%;">Start LITE</a>
+      </div>
+      <!-- FULL -->
+      <div class="card price-card reveal reveal-delay-1" style="border:2px solid var(--accent);">
+        <div class="popular-badge">Most Popular</div>
+        <span class="tag tag-green">FULL</span>
+        <h3 style="font-size:1.2rem;margin:16px 0 4px;">Everything You Need to Dominate</h3>
+        <p style="font-size:.9rem;color:var(--g500);margin-bottom:20px;">The complete package. No compromises.</p>
+        <div class="price-amount">$197<span class="price-period">/mo</span></div>
+        <ul>
+          <li>Advanced email triage</li>
+<li>Smart calendar optimization</li>
+<li>Daily briefings</li>
+<li>Deep research</li>
+<li>Travel planning</li>
+<li>Meeting prep</li>
+<li>Doc summarization</li>
+<li>Priority inbox</li>
+<li>Expense reports</li>
+<li>Communication drafts</li>
+        </ul>
+        <a href="/checkout/?plan=full&agency=executive-assistant" class="btn btn-gold" style="width:100%;">Go FULL</a>
+      </div>
+    </div>
+    <!-- Day Pass -->
+    <div class="card reveal" style="text-align:center;margin-top:28px;border-style:dashed;">
+      <p style="font-weight:700;font-size:1.1rem;margin-bottom:4px;">Need it just once?</p>
+      <p style="color:var(--g500);margin-bottom:16px;">Full access for 24 hours. No subscription. No commitment.</p>
+      <a href="/checkout/?plan=daypass&agency=executive-assistant" class="btn btn-outline">Day Pass &mdash; $24.97</a>
+    </div>
+    <!-- Comparison callout -->
+    <div class="reveal" style="text-align:center;margin-top:36px;padding:24px;background:var(--green-light);border-radius:10px;">
+      <p style="font-size:1.1rem;font-weight:700;color:var(--green);">
+        That's <span style="text-decoration:line-through;color:var(--red);">$2500/mo</span> vs <span>$47/mo</span>. You do the math.
+      </p>
+      <p style="font-size:.9rem;color:var(--g500);margin-top:4px;">Save up to $2453/mo vs virtual assistant</p>
+    </div>
+    <!-- ROI Calculator -->
+    <div class="roi-calc reveal">
+      <h3 style="font-size:1.15rem;margin-bottom:4px;">Your Savings Calculator</h3>
+      <p style="color:var(--g500);font-size:.9rem;margin-bottom:16px;">Enter what you currently pay for Virtual assistant</p>
+      <label for="roi-spend" style="font-size:.8rem;color:var(--g500);display:block;margin-bottom:6px;">Current monthly spend ($)</label>
+      <input id="roi-spend" type="number" value="2500" min="0" step="100">
+      <div class="roi-result" id="roi-savings">$0</div>
+      <p style="font-size:.85rem;color:var(--g500);margin-top:4px;">saved every month with FULL plan</p>
+      <p id="roi-annual" style="font-size:.9rem;color:var(--green);font-weight:700;margin-top:8px;"></p>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 7 — BUNDLE UPSELL                                 -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section section-dark">
+  <div class="wrap" style="text-align:center;">
+    <h2 class="reveal" style="font-size:2rem;margin-bottom:12px;color:#fff;">Want more than just Executive & Personal Assistant?</h2>
+    <p class="reveal" style="color:rgba(255,255,255,.65);font-size:1.05rem;margin-bottom:36px;">Bundle with our other 14 AI agencies and save up to 55%.</p>
+    <div class="grid-4 reveal" style="max-width:800px;margin:0 auto 36px;">
+      <div class="mini-card">
+        <div class="mini-icon">&#127912;</div>
+        <div class="mini-name" style="color:rgba(255,255,255,.8);">Brand Agency</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon">&#128200;</div>
+        <div class="mini-name" style="color:rgba(255,255,255,.8);">Analytics Agency</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon">&#128227;</div>
+        <div class="mini-name" style="color:rgba(255,255,255,.8);">Ad Agency</div>
+      </div>
+      <div class="mini-card">
+        <div class="mini-icon">&#9997;</div>
+        <div class="mini-name" style="color:rgba(255,255,255,.8);">Content Agency</div>
+      </div>
+    </div>
+    <div class="reveal" style="display:flex;gap:16px;justify-content:center;flex-wrap:wrap;">
+      <a href="/services/" class="btn btn-outline-light">Explore All 15 Agencies &rarr;</a>
+      <a href="/services/bundle/" class="btn btn-gold">Build Your Custom Bundle &rarr;</a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 8 — HOW IT WORKS                                  -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section section-paper">
+  <div class="wrap">
+    <h2 class="section-title reveal">How It Works</h2>
+    <p class="section-sub reveal">From signup to first deliverables in under 48 hours.</p>
+    <div class="reveal" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px;">
+      <div class="step-card"><div class="step-num">1</div><h3>Onboard</h3><p>Share your requirements</p></div>
+<div class="step-card"><div class="step-num">2</div><h3>We Deliver</h3><p>Our AI team executes</p></div>
+<div class="step-card"><div class="step-num">3</div><h3>You Scale</h3><p>Focus on growth</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 9 — FAQ                                           -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section">
+  <div class="wrap-narrow">
+    <h2 class="section-title reveal">Frequently Asked Questions</h2>
+    <p class="section-sub reveal">Everything you need to know before you start.</p>
+    <div class="reveal">
+      <details class="faq-item"><summary>How quickly can I start?</summary><p>Most clients are running within 24-48 hours.</p></details>
+<details class="faq-item"><summary>Can I upgrade LITE to FULL?</summary><p>Yes, upgrade instantly. Price difference is prorated.</p></details>
+<details class="faq-item"><summary>What about day passes?</summary><p>Full access for 24 hours, no commitment needed.</p></details>
+<details class="faq-item"><summary>Any contracts?</summary><p>No contracts. Cancel anytime with one click.</p></details>
+<details class="faq-item"><summary>Quality vs hiring a firm?</summary><p>Enterprise-grade output at a fraction of the cost, with faster turnaround.</p></details>
+
+      <details>
+        <summary>What if I want to cancel?</summary>
+        <div class="faq-body">Cancel anytime with a single click from your dashboard. No cancellation fees, no guilt trips, no hoops to jump through. Your subscription simply ends at the current billing cycle.</div>
+      </details>
+      <details>
+        <summary>Is there a money-back guarantee?</summary>
+        <div class="faq-body">Yes. If we don't deliver your first batch of work within 14 days of signup, you get a full refund. No questions asked. We put our money where our mouth is.</div>
+      </details>
+      <details>
+        <summary>How is this different from hiring a freelancer?</summary>
+        <div class="faq-body">Freelancers are great, but they're expensive, inconsistent, and slow. Our AI-powered workflow delivers at machine speed with human-quality oversight, at a fraction of the cost. And we never ghost you.</div>
+      </details>
+      <details>
+        <summary>Can I switch between LITE and FULL?</summary>
+        <div class="faq-body">Absolutely. Upgrade or downgrade anytime. If you upgrade mid-cycle, we prorate the difference. If you downgrade, the change takes effect at your next billing date.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 10 — FINAL CTA                                    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<section class="section-dark" style="padding:80px 0;text-align:center;">
+  <div class="wrap">
+    <h2 class="reveal" style="font-size:2.2rem;color:#fff;margin-bottom:16px;">Every day without Executive & Personal Assistant is money left on the table.</h2>
+    <p class="reveal" style="font-size:1.1rem;color:rgba(255,255,255,.7);max-width:580px;margin:0 auto 12px;">
+      You're currently spending <span style="color:#f87171;font-weight:700;">$1,500-$3,500/mo</span> for Virtual assistant.
+      We do it for <span style="color:#4ade80;font-weight:700;">$47/mo</span>.
+    </p>
+    <p class="reveal" style="color:rgba(255,255,255,.45);font-size:.9rem;margin-bottom:36px;">The only question is how long you're willing to overpay.</p>
+    <a href="#pricing" class="btn btn-gold reveal" style="font-size:1.1rem;padding:18px 48px;">Activate Executive & Personal Assistant Now &rarr;</a>
+    <div class="reveal" style="margin-top:24px;display:flex;gap:20px;justify-content:center;flex-wrap:wrap;font-size:.85rem;color:rgba(255,255,255,.5);">
+      <span>14-day delivery guarantee</span>
+      <span>&middot;</span>
+      <span>No contracts</span>
+      <span>&middot;</span>
+      <span>Cancel anytime</span>
+    </div>
+    <p class="reveal" style="margin-top:24px;font-size:.9rem;">
+      <a href="tel:+16318929817" style="color:rgba(255,255,255,.6);">&#128222; (631) 892-9817 &mdash; Talk to our AI assistant</a>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SECTION 11 — FOOTER                                       -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<footer style="background:var(--dark);border-top:1px solid rgba(255,255,255,.08);padding:40px 0;color:rgba(255,255,255,.4);font-size:.85rem;">
+  <div class="wrap" style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:16px;">
+    <div>
+      <a href="/" style="font-family:'Playfair Display',serif;font-weight:700;font-size:1rem;color:rgba(255,255,255,.7);">SCT Agency</a>
+      <p style="margin-top:4px;">&copy; 2020&ndash;2026 SCT Agency LLC. All rights reserved.</p>
+    </div>
+    <div style="display:flex;gap:20px;flex-wrap:wrap;">
+      <a href="/services/" style="color:rgba(255,255,255,.5);">All Agencies</a>
+      <a href="/services/bundle/" style="color:rgba(255,255,255,.5);">Bundles</a>
+      <a href="/blog/" style="color:rgba(255,255,255,.5);">Blog</a>
+      <a href="/privacy/" style="color:rgba(255,255,255,.5);">Privacy</a>
+      <a href="/terms/" style="color:rgba(255,255,255,.5);">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════════════════════════════════════════════════ -->
+<!-- SCRIPTS                                                    -->
+<!-- ═══════════════════════════════════════════════════════════ -->
+<script>
+(function(){
+  /* ── Scroll-triggered reveal animations ── */
+  var reveals = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    reveals.forEach(function(el) { observer.observe(el); });
+  } else {
+    reveals.forEach(function(el) { el.classList.add('visible'); });
+  }
+
+  /* ── ROI Calculator ── */
+  var roiInput = document.getElementById('roi-spend');
+  var roiSavings = document.getElementById('roi-savings');
+  var roiAnnual = document.getElementById('roi-annual');
+  var fullPrice = 197;
+
+  function calcROI() {
+    var spend = parseFloat(roiInput.value) || 0;
+    var monthly = spend - fullPrice;
+    if (monthly < 0) monthly = 0;
+    roiSavings.textContent = '$' + monthly.toLocaleString();
+    var annual = monthly * 12;
+    roiAnnual.textContent = annual > 0 ? "That's $" + annual.toLocaleString() + '/year back in your pocket.' : '';
+  }
+  if (roiInput) {
+    roiInput.addEventListener('input', calcROI);
+    calcROI();
+  }
+
+  /* ── Smooth scroll for anchor links ── */
+  document.querySelectorAll('a[href^="#"]').forEach(function(a) {
+    a.addEventListener('click', function(e) {
+      var target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+})();
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body>
+</html>

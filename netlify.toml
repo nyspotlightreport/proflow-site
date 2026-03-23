@@ -1,0 +1,88 @@
+[[redirects]]
+  from = "/api/voice-conversation"
+  to   = "/.netlify/functions/voice-conversation"
+  status = 200
+
+[[redirects]]
+  from = "/api/client-api"
+  to   = "/.netlify/functions/client-api"
+  status = 200
+
+[[redirects]]
+  from = "/api/client-register"
+  to   = "/.netlify/functions/client-register"
+  status = 200
+
+[[redirects]]
+  from = "/api/news"
+  to   = "/.netlify/functions/api-news"
+  status = 200
+
+[[redirects]]
+  from = "/api/stocks"
+  to   = "/.netlify/functions/stocks"
+  status = 200
+
+[[redirects]]
+  from = "/api/subscribe"
+  to   = "/.netlify/functions/subscribe"
+  status = 200
+
+[[redirects]]
+  from = "/api/auth-login"
+  to   = "/.netlify/functions/auth-login"
+  status = 200
+
+[[redirects]]
+  from = "/api/linkedin-callback"
+  to   = "/.netlify/functions/linkedin-callback"
+  status = 200
+
+[[redirects]]
+  from = "/api/facebook-callback"
+  to   = "/.netlify/functions/facebook-callback"
+  status = 200
+
+[[redirects]]
+  from = "/api/save-secret"
+  to   = "/.netlify/functions/save-secret"
+  status = 200
+
+[[redirects]]
+  from = "/api/verify-token"
+  to   = "/.netlify/functions/verify-token"
+  status = 200
+
+[[redirects]]
+  from = "/api/reset-password"
+  to   = "/.netlify/functions/reset-password"
+  status = 200
+
+[[redirects]]
+  from = "/api/agents"
+  to   = "/.netlify/functions/agent-bridge"
+  status = 200
+
+[[redirects]]
+  from = "/api/health"
+  to   = "/.netlify/functions/health-dashboard"
+  status = 200
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+[[headers]]
+  for = "/*.html"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-XSS-Protection = "1; mode=block"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https: data:; connect-src 'self' https://api.anthropic.com https://api.elevenlabs.io https://content.guardianapis.com https://newsapi.org https://www.alphavantage.co"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "https://nyspotlightreport.com"
+    Access-Control-Allow-Headers = "Content-Type, Authorization, X-Butler-Key"

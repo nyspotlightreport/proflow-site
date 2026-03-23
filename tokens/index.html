@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYSR Platform Connections</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:#060a0f;color:#e2e8f0;padding:40px 20px}
+.page{max-width:600px;margin:0 auto}
+h1{font-size:22px;color:#f8fafc;margin-bottom:4px}
+.sub{font-size:14px;color:#64748b;margin-bottom:28px}
+.card{background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:22px;margin-bottom:12px}
+.card-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px}
+.platform{font-size:16px;font-weight:600;color:#f1f5f9}
+.badge{font-size:11px;font-weight:600;padding:3px 10px;border-radius:12px}
+.b-done{background:rgba(34,197,94,.15);color:#22c55e;border:1px solid rgba(34,197,94,.3)}
+.b-ready{background:rgba(201,168,76,.1);color:#C9A84C;border:1px solid rgba(201,168,76,.25)}
+.b-auto{background:rgba(99,102,241,.1);color:#818cf8;border:1px solid rgba(99,102,241,.2)}
+.b-ui{background:rgba(148,163,184,.1);color:#94a3b8;border:1px solid rgba(148,163,184,.15)}
+.mech{font-size:13px;color:#64748b;line-height:1.6;margin-bottom:12px}
+.mech strong{color:#94a3b8}
+hr{border:none;border-top:1px solid rgba(255,255,255,.06);margin:0 0 12px}
+.btn{display:inline-block;padding:11px 24px;border-radius:8px;font-size:14px;font-weight:600;text-decoration:none;color:#fff;border:none;cursor:pointer}
+.li{background:#0077B5}.meta{background:#1877F2}.reddit{background:#FF4500}.google{background:#4285F4}
+inp{width:100%;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:7px;padding:9px 12px;color:#e2e8f0;font-size:13px;margin-bottom:8px;outline:none;display:block}
+.save{background:#C9A84C;color:#060a0f;border:none;padding:8px 18px;border-radius:7px;font-weight:700;cursor:pointer;font-size:13px;margin-top:4px}
+.msg{font-size:12px;padding:8px 12px;border-radius:6px;margin-top:8px;display:none}
+.ok{background:rgba(34,197,94,.08);color:#22c55e;border:1px solid rgba(34,197,94,.2)}
+.warn{background:rgba(201,168,76,.08);color:#C9A84C;border:1px solid rgba(201,168,76,.2)}
+.ready-banner{background:rgba(34,197,94,.06);border:1px solid rgba(34,197,94,.15);border-radius:8px;padding:10px 14px;font-size:13px;color:#22c55e;margin-bottom:10px}
+</style>
+</head>
+<body>
+<div class="page">
+  <h1>🔑 NYSR Platform Connections</h1>
+  <p class="sub">LinkedIn + Meta credentials live in Netlify ✅ — click Connect on each. Google: 2-step device flow below.</p>
+
+  <!-- LinkedIn -->
+  <div class="card">
+    <div class="card-top"><span class="platform">LinkedIn</span><span class="badge b-ready">READY — 1 click</span></div>
+    <div class="ready-banner">✅ Credentials in Netlify. Click Connect → Allow → MWF posts live permanently.</div>
+    <hr>
+    <a href="/.netlify/functions/linkedin-auth-start" class="btn li">Connect LinkedIn →</a>
+  </div>
+
+  <!-- Meta -->
+  <div class="card">
+    <div class="card-top"><span class="platform">Instagram + Facebook</span><span class="badge b-ready">READY — 1 click</span></div>
+    <div class="ready-banner">✅ Meta App ID + Secret in Netlify. Click Connect → permanent non-expiring token.</div>
+    <hr>
+    <a href="/.netlify/functions/meta-auth-start" class="btn meta">Connect Instagram + Facebook →</a>
+  </div>
+
+  <!-- Google — Device Flow (bypasses org policy) -->
+  <div class="card">
+    <div class="card-top"><span class="platform">Google / YouTube</span><span class="badge b-ready">Device Flow — SA key blocked by org policy</span></div>
+    <div class="mech">
+      Your org policy blocks service account JSON key creation (iam.disableServiceAccountKeyCreation).
+      <strong>Device Flow OAuth bypasses this entirely</strong> — no SA key needed, works with Testing apps, tokens refresh automatically.
+      Two steps: click button → enter a 9-char code on Google → done forever.
+    </div>
+    <hr>
+    <a href="/.netlify/functions/google-device-auth" class="btn google" target="_blank">Start Google Authorization (Device Flow) →</a>
+    <div class="mech" style="margin-top:10px;font-size:12px;">
+      If it says "Google Client ID not configured" — add <strong>GOOGLE_CLIENT_ID</strong> and <strong>GOOGLE_CLIENT_SECRET</strong> 
+      from <a href="https://console.cloud.google.com/apis/credentials" target="_blank" style="color:#C9A84C">console.cloud.google.com/apis/credentials</a> 
+      → OAuth 2.0 Client IDs → Desktop app → copy ID + secret → paste at <a href="#google-creds" style="color:#C9A84C">fields below</a>.
+    </div>
+    <div id="google-creds" style="margin-top:10px">
+      <input class="inp" id="g_id" placeholder="Google OAuth Client ID (from credentials page)"/>
+      <input class="inp" id="g_sec" type="password" placeholder="Google OAuth Client Secret"/>
+      <button class="save" onclick="saveGoogleCreds()">Save → Then click Start Google Authorization above →</button>
+      <div class="msg" id="g_msg"></div>
+    </div>
+  </div>
+
+  <!-- Reddit -->
+  <div class="card">
+    <div class="card-top"><span class="platform">Reddit</span><span class="badge b-auto">password grant — zero OAuth</span></div>
+    <div class="mech">No browser redirect. Username + password + client creds = fully automated token forever.</div>
+    <hr>
+    <input class="inp" id="r_user" placeholder="Reddit username"/>
+    <input class="inp" id="r_pass" type="password" placeholder="Reddit password"/>
+    <input class="inp" id="r_id" placeholder="Reddit client_id (from reddit.com/prefs/apps)"/>
+    <input class="inp" id="r_sec" type="password" placeholder="Reddit client_secret"/>
+    <button class="save" onclick="saveMulti({REDDIT_USERNAME:'r_user',REDDIT_PASSWORD:'r_pass',REDDIT_CLIENT_ID:'r_id',REDDIT_CLIENT_SECRET:'r_sec'},'r_msg')">Save Reddit Credentials →</button>
+    <div class="msg" id="r_msg"></div>
+  </div>
+
+  <!-- Shopify -->
+  <div class="card">
+    <div class="card-top"><span class="platform">Shopify Entity Name</span><span class="badge b-ui">2-min UI — API blocked by Shopify</span></div>
+    <hr>
+    <a href="https://nysr.myshopify.com/admin/settings/general" target="_blank" class="btn" style="background:#96bf48;color:#000">Shopify Settings → Business details → "NY Spotlight Report" → Save →</a>
+  </div>
+
+</div>
+<script>
+async function saveGoogleCreds() {
+  const id  = document.getElementById('g_id').value.trim();
+  const sec = document.getElementById('g_sec').value.trim();
+  const msg = document.getElementById('g_msg');
+  if (!id || !sec) { show(msg, 'Both Client ID and Secret required', 'warn'); return; }
+  const r = await fetch('/.netlify/functions/save-secret', {
+    method:'POST', headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({ secrets: { GOOGLE_CLIENT_ID: id, GOOGLE_OAUTH_CLIENT_ID: id, GOOGLE_CLIENT_SECRET: sec, GOOGLE_OAUTH_SECRET: sec } })
+  }).catch(e=>({ json:async()=>({error:e.message}) }));
+  const d = await r.json();
+  show(msg, d.success ? '✅ Google credentials saved — now click Start Google Authorization above' : '❌ ' + (d.error||'Failed'), d.success ? 'ok' : 'warn');
+}
+async function saveMulti(mapping, msgId) {
+  const msg = document.getElementById(msgId);
+  const secrets = {};
+  for (const [k,id] of Object.entries(mapping)) {
+    const v = document.getElementById(id).value.trim();
+    if (!v) { show(msg,'Fill all 4 fields','warn'); return; }
+    secrets[k] = v;
+  }
+  const r = await fetch('/.netlify/functions/save-secret',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({secrets})}).catch(e=>({json:async()=>({error:e.message})}));
+  const d = await r.json();
+  show(msg, d.success ? '✅ Reddit saved — fully automated from here' : '❌ '+(d.error||'Failed'), d.success ? 'ok' : 'warn');
+}
+function show(el,text,type){el.textContent=text;el.className='msg '+type;el.style.display='block';}
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body></html>

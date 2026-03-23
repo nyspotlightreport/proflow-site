@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NYSR Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@700;800;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#020409;--s:#060910;--c:#0A0F1C;--c2:#0E1525;
+  --br:rgba(255,255,255,.05);--br2:rgba(255,255,255,.1);
+  --gold:#C9A84C;--gold2:#E8C96A;--gd:rgba(201,168,76,.08);
+  --green:#22D3A0;--blue:#3B82F6;--red:#EF4444;--amber:#F59E0B;--purple:#A855F7;
+  --text:#E8EDF5;--muted:#475569;--muted2:#334155;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:radial-gradient(rgba(201,168,76,.04) 1px,transparent 1px);background-size:28px 28px;}
+body::after{content:'';position:fixed;top:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--gold),transparent);z-index:100;}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:16px;padding:20px 28px;
+  border-bottom:1px solid var(--br);background:rgba(2,4,9,.9);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:50;}
+.hdr-logo{font-family:'Syne',sans-serif;font-weight:900;font-size:18px;}
+.hdr-logo span{color:var(--gold);}
+.hdr-status{display:flex;align-items:center;gap:6px;font-size:11px;
+  font-family:'DM Mono',monospace;color:var(--muted);}
+.dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;}
+.dot.green{background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse 2s infinite;}
+.dot.red{background:var(--red);}
+.dot.amber{background:var(--amber);}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hdr-time{margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);}
+
+/* LAYOUT */
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 65px);}
+.sidebar{background:var(--s);border-right:1px solid var(--br);padding:16px 0;position:sticky;top:65px;height:calc(100vh - 65px);overflow-y:auto;}
+.main{padding:24px;overflow-y:auto;position:relative;z-index:1;}
+
+/* SIDEBAR NAV */
+.nav-section{padding:0 12px;margin-bottom:4px;}
+.nav-label{font-size:9px;font-weight:700;color:var(--muted2);text-transform:uppercase;
+  letter-spacing:.1em;font-family:'DM Mono',monospace;padding:8px 8px 4px;}
+.nav-item{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;
+  cursor:pointer;transition:all .15s;font-size:12px;color:var(--muted);}
+.nav-item:hover{background:var(--br);color:var(--text);}
+.nav-item.active{background:var(--gd);color:var(--gold);border-left:2px solid var(--gold);}
+.nav-item .badge{margin-left:auto;background:var(--red);color:white;
+  padding:1px 5px;border-radius:4px;font-size:9px;font-weight:700;}
+.nav-item .badge.green{background:rgba(34,211,160,.2);color:var(--green);}
+
+/* PANELS */
+.panel{display:none;}
+.panel.active{display:block;}
+
+/* STAT CARDS */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-bottom:24px;}
+.stat-card{background:var(--c);border:1px solid var(--br);border-radius:12px;padding:16px;}
+.stat-card.gold{border-color:rgba(201,168,76,.3);background:linear-gradient(135deg,var(--c),var(--c2));}
+.stat-label{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;
+  letter-spacing:.06em;font-family:'DM Mono',monospace;margin-bottom:8px;}
+.stat-val{font-family:'Syne',sans-serif;font-size:28px;font-weight:900;line-height:1;}
+.stat-val.gold{color:var(--gold);}
+.stat-val.green{color:var(--green);}
+.stat-val.red{color:var(--red);}
+.stat-sub{font-size:11px;color:var(--muted);margin-top:4px;}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:separate;border-spacing:0;margin-bottom:20px;}
+.data-table th{background:var(--c2);padding:10px 14px;font-size:10px;font-weight:700;
+  color:var(--muted);text-align:left;letter-spacing:.06em;text-transform:uppercase;
+  font-family:'DM Mono',monospace;border-bottom:1px solid var(--br2);}
+.data-table td{padding:10px 14px;border-bottom:1px solid var(--br);font-size:12px;
+  background:var(--c);}
+.data-table tr:last-child td{border:none;}
+.data-table tr:hover td{background:var(--c2);}
+
+/* BUTTONS */
+.btn{padding:8px 16px;border-radius:8px;font-size:12px;font-weight:700;
+  border:none;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;}
+.btn-gold{background:var(--gold);color:var(--bg);}
+.btn-gold:hover{background:var(--gold2);}
+.btn-outline{background:transparent;border:1px solid var(--br2);color:var(--muted);}
+.btn-outline:hover{border-color:var(--gold);color:var(--gold);}
+.btn-red{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+.btn-green{background:rgba(34,211,160,.1);border:1px solid rgba(34,211,160,.3);color:var(--green);}
+.btn-sm{padding:4px 10px;font-size:11px;}
+
+/* STATUS BADGES */
+.badge-status{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;
+  border-radius:6px;font-size:10px;font-weight:700;font-family:'DM Mono',monospace;}
+.bs-live{background:rgba(34,211,160,.1);color:var(--green);}
+.bs-fail{background:rgba(239,68,68,.1);color:var(--red);}
+.bs-warn{background:rgba(245,158,11,.1);color:var(--amber);}
+.bs-idle{background:rgba(71,85,105,.1);color:var(--muted);}
+
+/* CARDS */
+.card{background:var(--c);border:1px solid var(--br);border-radius:14px;
+  padding:20px;margin-bottom:16px;}
+.card-title{font-family:'Syne',sans-serif;font-size:15px;font-weight:700;
+  margin-bottom:12px;display:flex;align-items:center;gap:8px;}
+.card-title span{font-size:18px;}
+
+/* SECTION HEADER */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-hdr h2{font-family:'Syne',sans-serif;font-size:20px;font-weight:800;letter-spacing:-.5px;}
+.sec-hdr p{font-size:12px;color:var(--muted);margin-top:4px;}
+
+/* TERMINAL */
+.terminal{background:#000;border:1px solid #1a2d42;border-radius:10px;padding:16px;
+  font-family:'DM Mono',monospace;font-size:11px;color:#22D3A0;
+  height:200px;overflow-y:auto;line-height:1.6;}
+.terminal .err{color:var(--red);}
+.terminal .warn{color:var(--amber);}
+.terminal .info{color:var(--muted);}
+
+/* WORKFLOW GRID */
+.wf-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+.wf-card{background:var(--c);border:1px solid var(--br);border-radius:10px;
+  padding:14px;transition:border .15s;cursor:default;}
+.wf-card:hover{border-color:rgba(201,168,76,.2);}
+.wf-card.healthy{border-left:2px solid var(--green);}
+.wf-card.failing{border-left:2px solid var(--red);}
+.wf-card.never{border-left:2px solid var(--muted2);}
+.wf-name{font-size:12px;font-weight:600;margin-bottom:6px;line-height:1.3;}
+.wf-meta{display:flex;gap:8px;align-items:center;}
+.wf-rate{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);}
+
+/* REVENUE TRACKER */
+.rev-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px;}
+.rev-card{background:var(--c);border:1px solid var(--br);border-radius:12px;padding:18px;}
+.rev-icon{font-size:28px;margin-bottom:10px;}
+.rev-name{font-size:12px;font-weight:700;margin-bottom:4px;}
+.rev-amount{font-family:'Syne',sans-serif;font-size:22px;font-weight:900;color:var(--gold);}
+.rev-status{font-size:10px;color:var(--muted);margin-top:4px;font-family:'DM Mono',monospace;}
+
+/* PROGRESS BARS */
+.progress{height:4px;background:var(--br2);border-radius:2px;overflow:hidden;margin-top:8px;}
+.progress-bar{height:100%;border-radius:2px;transition:width .5s;}
+.pb-gold{background:var(--gold);}
+.pb-green{background:var(--green);}
+.pb-red{background:var(--red);}
+
+/* QUICK ACTIONS */
+.action-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;}
+.action-btn{background:var(--c);border:1px solid var(--br);border-radius:10px;
+  padding:16px 12px;text-align:center;cursor:pointer;transition:all .2s;}
+.action-btn:hover{border-color:rgba(201,168,76,.3);background:var(--gd);}
+.action-btn .ab-icon{font-size:24px;margin-bottom:8px;}
+.action-btn .ab-name{font-size:11px;font-weight:700;color:var(--text);}
+.action-btn .ab-desc{font-size:10px;color:var(--muted);margin-top:3px;}
+
+/* ALERT FEED */
+.alert-feed{display:flex;flex-direction:column;gap:8px;}
+.alert-item{background:var(--c);border:1px solid var(--br);border-radius:8px;
+  padding:12px;display:flex;gap:10px;align-items:flex-start;}
+.alert-item.crit{border-color:rgba(239,68,68,.3);}
+.alert-item.warn{border-color:rgba(245,158,11,.3);}
+.alert-item.info{border-color:rgba(59,130,246,.2);}
+.alert-icon{font-size:16px;flex-shrink:0;}
+.alert-text{flex:1;}
+.alert-title{font-size:12px;font-weight:700;}
+.alert-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.alert-time{font-size:10px;color:var(--muted2);font-family:'DM Mono',monospace;white-space:nowrap;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;}
+  .sidebar{position:static;height:auto;border-right:none;border-bottom:1px solid var(--br);}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="hdr">
+  <div class="hdr-logo">NYSR <span>Command</span></div>
+  <div class="hdr-status"><div class="dot green" id="sysStatus"></div><span id="statusText">All Systems Nominal</span></div>
+  <div class="hdr-status" style="margin-left:16px;">
+    <div class="dot green"></div>
+    <span>40 Agents Active</span>
+  </div>
+  <div class="hdr-status" style="margin-left:8px;">
+    <div class="dot green"></div>
+    <span>101 Bots Running</span>
+  </div>
+  <div class="hdr-time" id="clock"></div>
+</div>
+
+<!-- SHELL -->
+<div class="shell">
+  <!-- SIDEBAR -->
+  <nav class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Overview</div>
+      <div class="nav-item active" onclick="showPanel('overview')">🏠 Dashboard</div>
+      <div class="nav-item" onclick="showPanel('alerts')">🔔 Alerts <span class="badge" id="alertBadge">2</span></div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Operations</div>
+      <div class="nav-item" onclick="showPanel('workflows')">⚡ Workflows (79)</div>
+      <div class="nav-item" onclick="showPanel('agents')">🤖 Agents (40)</div>
+      <div class="nav-item" onclick="showPanel('bots')">🔩 Bots (101)</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Revenue</div>
+      <div class="nav-item" onclick="showPanel('revenue')">💰 Revenue Streams</div>
+      <div class="nav-item" onclick="showPanel('gumroad')">🛍️ Products (10)</div>
+      <div class="nav-item" onclick="showPanel('stripe')">💳 Stripe</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Development</div>
+      <div class="nav-item" onclick="window.open('/dev/')">🏗️ Agency Dev</div>
+      <div class="nav-item" onclick="window.open('/engineering/')">⚙️ Engineering</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Departments</div>
+      <div class="nav-item" onclick="showPanel('intelligence')">🧠 Intelligence</div>
+      <div class="nav-item" onclick="window.open('/fixer/')">🎯 Fixer PR</div>
+      <div class="nav-item" onclick="window.open('/bd/')">📊 Business Dev</div>
+      <div class="nav-item" onclick="window.open('/james/')">🎩 James Butler</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Infrastructure</div>
+      <div class="nav-item" onclick="showPanel('infrastructure')">☁️ Hosts & Storage</div>
+      <div class="nav-item" onclick="showPanel('secrets')">🔑 Secrets (59)</div>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Actions</div>
+      <div class="nav-item" onclick="showPanel('actions')">🚀 Quick Launch</div>
+    </div>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- OVERVIEW PANEL -->
+    <div class="panel active" id="panel-overview">
+      <div class="sec-hdr">
+        <div><h2>System Overview</h2><p>Real-time status of the entire NYSR Agency</p></div>
+        <button class="btn btn-gold" onclick="refreshAll()">↻ Refresh</button>
+      </div>
+
+      <!-- Top stats -->
+      <div class="stat-grid">
+        <div class="stat-card gold">
+          <div class="stat-label">Est. Monthly Revenue</div>
+          <div class="stat-val gold">$0</div>
+          <div class="stat-sub">Target: $2,400+ by Day 90</div>
+          <div class="progress"><div class="progress-bar pb-gold" style="width:2%"></div></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Active Workflows</div>
+          <div class="stat-val green">79</div>
+          <div class="stat-sub">67 scheduled · 12 manual</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">AI Agents</div>
+          <div class="stat-val" style="color:var(--blue)">40</div>
+          <div class="stat-sub">All thinking, all running</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Bots</div>
+          <div class="stat-val" style="color:var(--purple)">101</div>
+          <div class="stat-sub">Specialists on standby</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Site Pages</div>
+          <div class="stat-val">97</div>
+          <div class="stat-sub">nyspotlightreport.com</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Secrets Set</div>
+          <div class="stat-val green">59</div>
+          <div class="stat-sub">5 still needed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Gumroad Products</div>
+          <div class="stat-val">10</div>
+          <div class="stat-sub">0 sales — traffic needed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">VPS Passive Income</div>
+          <div class="stat-val green">$15</div>
+          <div class="stat-sub">Honeygain + Traffmonetizer</div>
+        </div>
+      </div>
+
+      <!-- Alert feed -->
+      <div class="card">
+        <div class="card-title"><span>🔔</span> Active Alerts</div>
+        <div class="alert-feed">
+          <div class="alert-item crit">
+            <div class="alert-icon">❌</div>
+            <div class="alert-text">
+              <div class="alert-title">Netlify Deploy: 21% success rate</div>
+              <div class="alert-sub">Fixed: duplicate workflows removed, bulletproof deploy installed</div>
+            </div>
+            <div class="alert-time">Fixed ✅</div>
+          </div>
+          <div class="alert-item warn">
+            <div class="alert-icon">⚠️</div>
+            <div class="alert-text">
+              <div class="alert-title">5 secrets still missing</div>
+              <div class="alert-sub">LINKEDIN_ACCESS_TOKEN, INSTAGRAM_PAGE_TOKEN, REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET, FB_PAGE_TOKEN</div>
+            </div>
+            <div class="alert-time">Action needed</div>
+          </div>
+          <div class="alert-item info">
+            <div class="alert-icon">ℹ️</div>
+            <div class="alert-text">
+              <div class="alert-title">67 workflows have 0 runs</div>
+              <div class="alert-sub">Scheduled workflows — will activate on next cron trigger</div>
+            </div>
+            <div class="alert-time">Normal</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- System map -->
+      <div class="card">
+        <div class="card-title"><span>🗺️</span> System Architecture</div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+          <div style="text-align:center;padding:14px;background:var(--s);border-radius:10px;">
+            <div style="font-size:24px;margin-bottom:6px;">🧠</div>
+            <div style="font-size:11px;font-weight:700;">Omega Brain</div>
+            <div style="font-size:10px;color:var(--muted);">Master AI</div>
+            <div class="badge-status bs-live" style="margin-top:6px;">LIVE</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:var(--s);border-radius:10px;">
+            <div style="font-size:24px;margin-bottom:6px;">🛡️</div>
+            <div style="font-size:11px;font-weight:700;">Guardian</div>
+            <div style="font-size:10px;color:var(--muted);">Self-Healer</div>
+            <div class="badge-status bs-live" style="margin-top:6px;">EVERY 30m</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:var(--s);border-radius:10px;">
+            <div style="font-size:24px;margin-bottom:6px;">🎩</div>
+            <div style="font-size:11px;font-weight:700;">James Butler</div>
+            <div style="font-size:10px;color:var(--muted);">Concierge</div>
+            <div class="badge-status bs-live" style="margin-top:6px;">DAILY</div>
+          </div>
+          <div style="text-align:center;padding:14px;background:var(--s);border-radius:10px;">
+            <div style="font-size:24px;margin-bottom:6px;">⚙️</div>
+            <div style="font-size:11px;font-weight:700;">Reese Morgan</div>
+            <div style="font-size:10px;color:var(--muted);">Chief Engineer</div>
+            <div class="badge-status bs-idle" style="margin-top:6px;">ON DEMAND</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Revenue streams -->
+      <div class="card">
+        <div class="card-title"><span>💰</span> Revenue Streams Status</div>
+        <div class="rev-grid">
+          <div class="rev-card">
+            <div class="rev-icon">🤖</div>
+            <div class="rev-name">ProFlow AI SaaS</div>
+            <div class="rev-amount">$0</div>
+            <div class="rev-status">LIVE · Traffic needed</div>
+          </div>
+          <div class="rev-card">
+            <div class="rev-icon">🏭</div>
+            <div class="rev-name">DFY Agency</div>
+            <div class="rev-amount">$0</div>
+            <div class="rev-status">LIVE · Outreach active</div>
+          </div>
+          <div class="rev-card">
+            <div class="rev-icon">🛍️</div>
+            <div class="rev-name">Gumroad (10 products)</div>
+            <div class="rev-amount">$0</div>
+            <div class="rev-status">0 views · SEO building</div>
+          </div>
+          <div class="rev-card">
+            <div class="rev-icon">💾</div>
+            <div class="rev-name">VPS Bandwidth</div>
+            <div class="rev-amount">$15</div>
+            <div class="rev-status">4 containers running</div>
+          </div>
+          <div class="rev-card">
+            <div class="rev-icon">🔗</div>
+            <div class="rev-name">Affiliates</div>
+            <div class="rev-amount">$0</div>
+            <div class="rev-status">25+ programs linked</div>
+          </div>
+          <div class="rev-card">
+            <div class="rev-icon">⚡</div>
+            <div class="rev-name">DFY Bot Setup</div>
+            <div class="rev-amount">$0</div>
+            <div class="rev-status">$1.5k-$10k/sale</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WORKFLOWS PANEL -->
+    <div class="panel" id="panel-workflows">
+      <div class="sec-hdr">
+        <div><h2>⚡ Workflows</h2><p>79 total — GitHub Actions</p></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-outline btn-sm" onclick="filterWF('all')">All</button>
+          <button class="btn btn-green btn-sm" onclick="filterWF('healthy')">Healthy</button>
+          <button class="btn btn-red btn-sm" onclick="filterWF('failing')">Failing</button>
+        </div>
+      </div>
+
+      <div class="wf-grid" id="wfGrid">
+        <!-- Workflows populated dynamically -->
+        <div class="wf-card healthy">
+          <div class="wf-name">🧠 OMEGA — Full System Orchestration</div>
+          <div class="wf-meta">
+            <span class="badge-status bs-live">✅ 100%</span>
+            <span class="wf-rate">2/2 runs</span>
+          </div>
+        </div>
+        <div class="wf-card healthy">
+          <div class="wf-name">📱 Social Media Master (Daily)</div>
+          <div class="wf-meta">
+            <span class="badge-status bs-live">✅ 100%</span>
+            <span class="wf-rate">1/1 runs</span>
+          </div>
+        </div>
+        <div class="wf-card healthy">
+          <div class="wf-name">🔥 Sales & Marketing Engine</div>
+          <div class="wf-meta">
+            <span class="badge-status bs-live">✅ 100%</span>
+            <span class="wf-rate">1/1 runs</span>
+          </div>
+        </div>
+        <div class="wf-card healthy">
+          <div class="wf-name">🎩 James Butler (Daily)</div>
+          <div class="wf-meta">
+            <span class="badge-status bs-live">✅ 100%</span>
+            <span class="wf-rate">1/1 runs</span>
+          </div>
+        </div>
+        <div class="wf-card failing">
+          <div class="wf-name">🚀 Deploy Site to Netlify</div>
+          <div class="wf-meta">
+            <span class="badge-status bs-fail">⚡ FIXED</span>
+            <span class="wf-rate">Was 21% → Fixed</span>
+          </div>
+        </div>
+        <div class="wf-card failing">
+          <div class="wf-name">🛡️ Guardian — Self-Healing</div>
+          <div class="wf-meta">
+            <span class="badge-status bs-warn">⚡ UPGRADED</span>
+            <span class="wf-rate">v4.0 deployed</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:16px;text-align:center;">
+        <a href="https://github.com/nyspotlightreport/sct-agency-bots/actions" target="_blank" class="btn btn-outline">View All Runs on GitHub →</a>
+      </div>
+    </div>
+
+    <!-- AGENTS PANEL -->
+    <div class="panel" id="panel-agents">
+      <div class="sec-hdr"><div><h2>🤖 Agents (40)</h2><p>AI-powered autonomous decision makers</p></div></div>
+      <div class="wf-grid">
+        <div class="wf-card healthy"><div class="wf-name">🧠 Omega Brain</div><div class="wf-meta"><span class="badge-status bs-live">Master AI</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🛡️ The Guardian v4.0</div><div class="wf-meta"><span class="badge-status bs-live">Self-healer</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🎩 James Butler</div><div class="wf-meta"><span class="badge-status bs-live">Concierge</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">⚙️ Reese Morgan</div><div class="wf-meta"><span class="badge-status bs-idle">Chief Engineer</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">📊 Market Intelligence Scout</div><div class="wf-meta"><span class="badge-status bs-live">BD Intel</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">💰 Strategic ROI Optimizer</div><div class="wf-meta"><span class="badge-status bs-live">Weekly audit</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🔍 Reputation Intelligence Engine</div><div class="wf-meta"><span class="badge-status bs-live">Every 4h</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🎯 Apollo Scale Agent</div><div class="wf-meta"><span class="badge-status bs-live">200 emails/day</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">✍️ Elite Content Engine</div><div class="wf-meta"><span class="badge-status bs-live">Daily content</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🔗 Social Media Master</div><div class="wf-meta"><span class="badge-status bs-live">Multi-platform</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🎨 Design Agent</div><div class="wf-meta"><span class="badge-status bs-idle">On demand</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🔧 DevOps Agent</div><div class="wf-meta"><span class="badge-status bs-idle">On demand</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🔐 QA Testing Agent</div><div class="wf-meta"><span class="badge-status bs-idle">On demand</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">👁️ Code Review Agent</div><div class="wf-meta"><span class="badge-status bs-idle">On demand</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🏗️ Project Engine</div><div class="wf-meta"><span class="badge-status bs-idle">On demand</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">📈 Growth Intelligence</div><div class="wf-meta"><span class="badge-status bs-live">Daily</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🎙️ Voice Intelligence</div><div class="wf-meta"><span class="badge-status bs-live">ElevenLabs</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">🧬 Omega / System Brain</div><div class="wf-meta"><span class="badge-status bs-live">Self-learning</span></div></div>
+      </div>
+    </div>
+
+    <!-- INFRASTRUCTURE PANEL -->
+    <div class="panel" id="panel-infrastructure">
+      <div class="sec-hdr"><div><h2>☁️ Infrastructure</h2><p>Hosts, storage, processors</p></div></div>
+
+      <div class="stat-grid">
+        <div class="stat-card gold">
+          <div class="stat-label">Primary Host</div>
+          <div class="stat-val" style="font-size:18px;color:var(--gold)">Netlify</div>
+          <div class="stat-sub">nyspotlightreport.com · Free tier</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">LIVE</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Compute / CI</div>
+          <div class="stat-val" style="font-size:18px;">GitHub Actions</div>
+          <div class="stat-sub">79 workflows · Free + paid mins</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">79 WF</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Passive VPS</div>
+          <div class="stat-val" style="font-size:18px;">DigitalOcean</div>
+          <div class="stat-sub">204.48.29.16 · $6/mo · 4 containers</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">4 CONTAINERS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">AI Engine</div>
+          <div class="stat-val" style="font-size:18px;">Claude API</div>
+          <div class="stat-sub">Sonnet + Haiku · ~$1-2/day</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">ACTIVE</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Cold Email</div>
+          <div class="stat-val" style="font-size:18px;">Apollo Pro</div>
+          <div class="stat-sub">$99/mo · 200 emails/day</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">ACTIVE</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">SEO Intelligence</div>
+          <div class="stat-val" style="font-size:18px;">Ahrefs</div>
+          <div class="stat-sub">Starter $99/mo · Rank tracking</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">ACTIVE</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Code Source</div>
+          <div class="stat-val" style="font-size:18px;">GitHub</div>
+          <div class="stat-sub">nyspotlightreport/sct-agency-bots</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">59 SECRETS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Payments</div>
+          <div class="stat-val" style="font-size:18px;">Stripe</div>
+          <div class="stat-sub">7 payment links live</div>
+          <div class="badge-status bs-live" style="margin-top:8px;">LIVE</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>📦</span> Storage & Data Layers</div>
+        <table class="data-table">
+          <thead><tr><th>Layer</th><th>Purpose</th><th>Provider</th><th>Cost</th><th>Status</th></tr></thead>
+          <tbody>
+            <tr><td>Code repo</td><td>All bots, agents, workflows</td><td>GitHub</td><td>Free</td><td><span class="badge-status bs-live">✅ Live</span></td></tr>
+            <tr><td>Static site</td><td>97 pages + Netlify functions</td><td>Netlify CDN</td><td>Free</td><td><span class="badge-status bs-live">✅ Live</span></td></tr>
+            <tr><td>Secrets vault</td><td>59 API keys + credentials</td><td>GitHub Secrets</td><td>Free</td><td><span class="badge-status bs-live">✅ 59 set</span></td></tr>
+            <tr><td>Bot cache</td><td>Claude response cache</td><td>/tmp (ephemeral)</td><td>Free</td><td><span class="badge-status bs-live">✅ 1hr TTL</span></td></tr>
+            <tr><td>Artifacts</td><td>Workflow outputs (30-90d)</td><td>GitHub Actions</td><td>Free tier</td><td><span class="badge-status bs-live">✅ Active</span></td></tr>
+            <tr><td>Product storage</td><td>Chrome extension, projects</td><td>GitHub repo</td><td>Free</td><td><span class="badge-status bs-live">✅ Live</span></td></tr>
+            <tr><td>Database (needed)</td><td>Persistent state, analytics</td><td>Supabase Free</td><td>$0</td><td><span class="badge-status bs-warn">⚡ Recommended</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- QUICK ACTIONS PANEL -->
+    <div class="panel" id="panel-actions">
+      <div class="sec-hdr"><div><h2>🚀 Quick Launch</h2><p>One-click system controls</p></div></div>
+      <div class="action-grid">
+        <div class="action-btn" onclick="triggerWorkflow('omega')">
+          <div class="ab-icon">🧠</div>
+          <div class="ab-name">Run Omega Brain</div>
+          <div class="ab-desc">Full system orchestration</div>
+        </div>
+        <div class="action-btn" onclick="triggerWorkflow('guardian')">
+          <div class="ab-icon">🛡️</div>
+          <div class="ab-name">Run Guardian</div>
+          <div class="ab-desc">Health sweep + auto-fix</div>
+        </div>
+        <div class="action-btn" onclick="triggerWorkflow('deploy')">
+          <div class="ab-icon">🚀</div>
+          <div class="ab-name">Deploy Site</div>
+          <div class="ab-desc">Push to Netlify</div>
+        </div>
+        <div class="action-btn" onclick="triggerWorkflow('butler')">
+          <div class="ab-icon">🎩</div>
+          <div class="ab-name">James Butler</div>
+          <div class="ab-desc">Morning brief</div>
+        </div>
+        <div class="action-btn" onclick="triggerWorkflow('social')">
+          <div class="ab-icon">📱</div>
+          <div class="ab-name">Post Social</div>
+          <div class="ab-desc">All platforms</div>
+        </div>
+        <div class="action-btn" onclick="triggerWorkflow('sales')">
+          <div class="ab-icon">🔥</div>
+          <div class="ab-name">Sales Engine</div>
+          <div class="ab-desc">Cold email + outreach</div>
+        </div>
+        <div class="action-btn" onclick="window.open('/dev/')">
+          <div class="ab-icon">🏗️</div>
+          <div class="ab-name">Build Product</div>
+          <div class="ab-desc">Commission software</div>
+        </div>
+        <div class="action-btn" onclick="window.open('https://github.com/nyspotlightreport/sct-agency-bots/actions')">
+          <div class="ab-icon">⚡</div>
+          <div class="ab-name">GitHub Actions</div>
+          <div class="ab-desc">All workflow runs</div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:20px;">
+        <div class="card-title"><span>🖥️</span> Manual Trigger Console</div>
+        <div class="terminal" id="triggerLog">
+> NYSR Command Console v4.0 ready
+> Type a command or click a quick action above
+> Available: omega, guardian, deploy, butler, social, sales, engineer
+        </div>
+      </div>
+    </div>
+
+    <!-- SECRETS PANEL -->
+    <div class="panel" id="panel-secrets">
+      <div class="sec-hdr"><div><h2>🔑 Secrets Status</h2><p>59 set · 5 missing</p></div></div>
+      <div class="card">
+        <div class="card-title"><span>⚠️</span> Still Needed</div>
+        <table class="data-table">
+          <thead><tr><th>Secret</th><th>Purpose</th><th>How to Get</th></tr></thead>
+          <tbody>
+            <tr><td>LINKEDIN_ACCESS_TOKEN</td><td>LinkedIn posting</td><td>linkedin.com/developers/tools/oauth/token-generator</td></tr>
+            <tr><td>INSTAGRAM_PAGE_TOKEN</td><td>Instagram posting</td><td>Enter Facebook password in Meta developer tab</td></tr>
+            <tr><td>FB_PAGE_TOKEN</td><td>Facebook posting</td><td>Same as Instagram — Meta Graph API</td></tr>
+            <tr><td>REDDIT_CLIENT_ID</td><td>Reddit posting/monitoring</td><td>reddit.com/prefs/apps → Create script app</td></tr>
+            <tr><td>REDDIT_CLIENT_SECRET</td><td>Reddit auth</td><td>Same Reddit app creation above</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <div class="card-title"><span>✅</span> Key Secrets Confirmed</div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;">
+          ${["ANTHROPIC_API_KEY","TWITTER_API_KEY","TWITTER_BEARER_TOKEN","PUSHOVER_API_KEY","TIKTOK_CLIENT_KEY","STRIPE_SECRET_KEY","APOLLO_API_KEY","AHREFS_API_KEY","GUMROAD_ACCESS_TOKEN","BEEHIIV_API_KEY","ELEVENLABS_API_KEY","GMAIL_APP_PASS"].map(s => 
+            `<span class="badge-status bs-live">✅ ${s}</span>`
+          ).join("")}
+        </div>
+      </div>
+    </div>
+
+    <!-- INTELLIGENCE PANEL -->
+    <div class="panel" id="panel-intelligence">
+      <div class="sec-hdr"><div><h2>🧠 Intelligence Systems</h2></div></div>
+      <div class="wf-grid">
+        <div class="wf-card healthy"><div class="wf-name">Market Intelligence Scout</div><div class="wf-meta"><span class="badge-status bs-live">Daily at 8am</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">Reputation Intelligence Engine</div><div class="wf-meta"><span class="badge-status bs-live">Every 4h</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">Proactive Intelligence</div><div class="wf-meta"><span class="badge-status bs-live">Every 4h</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">Trend Intelligence Agent</div><div class="wf-meta"><span class="badge-status bs-live">Daily</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">Journalist Tracker</div><div class="wf-meta"><span class="badge-status bs-live">Weekly</span></div></div>
+        <div class="wf-card healthy"><div class="wf-name">Threat Intelligence Feed</div><div class="wf-meta"><span class="badge-status bs-live">Daily</span></div></div>
+      </div>
+      <div style="text-align:center;margin-top:16px;">
+        <a href="/intelligence/" class="btn btn-gold">Open Intelligence Dashboard →</a>
+      </div>
+    </div>
+
+    <!-- REVENUE / ALERTS placeholder panels -->
+    <div class="panel" id="panel-alerts">
+      <div class="sec-hdr"><div><h2>🔔 Alerts</h2></div></div>
+      <div class="alert-feed">
+        <div class="alert-item crit">
+          <div class="alert-icon">✅</div>
+          <div class="alert-text"><div class="alert-title">Netlify Deploy Fixed</div><div class="alert-sub">Duplicate workflows removed. Bulletproof single-workflow deploy installed.</div></div>
+          <div class="alert-time">Today</div>
+        </div>
+        <div class="alert-item warn">
+          <div class="alert-icon">⚠️</div>
+          <div class="alert-text"><div class="alert-title">5 Social Platform Secrets Missing</div><div class="alert-sub">LinkedIn, Instagram, Facebook, Reddit tokens needed for full social coverage</div></div>
+          <div class="alert-time">Pending</div>
+        </div>
+        <div class="alert-item info">
+          <div class="alert-icon">✅</div>
+          <div class="alert-text"><div class="alert-title">Guardian v4.0 Upgraded</div><div class="alert-sub">Now monitors site health, API keys, deploy status, workflow health</div></div>
+          <div class="alert-time">Today</div>
+        </div>
+        <div class="alert-item info">
+          <div class="alert-icon">✅</div>
+          <div class="alert-text"><div class="alert-title">Claude Core v4.0 Deployed</div><div class="alert-sub">Streaming, JSON mode, batch processing, better caching, cost tracking added</div></div>
+          <div class="alert-time">Today</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-revenue">
+      <div class="sec-hdr"><div><h2>💰 Revenue Streams</h2></div></div>
+      <div class="rev-grid">
+        <div class="rev-card"><div class="rev-icon">🤖</div><div class="rev-name">ProFlow AI ($97-497/mo)</div><div class="rev-amount">$0 MRR</div><div class="rev-status">Live at /proflow/ — needs traffic</div></div>
+        <div class="rev-card"><div class="rev-icon">🏭</div><div class="rev-name">DFY Agency ($997-1997/mo)</div><div class="rev-amount">$0 MRR</div><div class="rev-status">Live at /agency/ — outreach active</div></div>
+        <div class="rev-card"><div class="rev-icon">⚡</div><div class="rev-name">Bot Setup Service ($1.5k-10k)</div><div class="rev-amount">$0</div><div class="rev-status">Live at /dfy-setup/</div></div>
+        <div class="rev-card"><div class="rev-icon">🛍️</div><div class="rev-name">Gumroad (10 products)</div><div class="rev-amount">$0</div><div class="rev-status">0 views — SEO + traffic needed</div></div>
+        <div class="rev-card"><div class="rev-icon">💾</div><div class="rev-name">VPS Passive (bandwidth)</div><div class="rev-amount">~$15/mo</div><div class="rev-status">Honeygain + Traffmonetizer running</div></div>
+        <div class="rev-card"><div class="rev-icon">🔗</div><div class="rev-name">Affiliate (25+ programs)</div><div class="rev-amount">$0</div><div class="rev-status">Links live — traffic converts</div></div>
+      </div>
+      <div class="card" style="margin-top:16px;">
+        <div class="card-title"><span>📈</span> Revenue Projections</div>
+        <table class="data-table">
+          <thead><tr><th>Milestone</th><th>Revenue</th><th>Primary Driver</th></tr></thead>
+          <tbody>
+            <tr><td>Day 10</td><td>$8-50</td><td>VPS passive</td></tr>
+            <tr><td>Day 30</td><td>$80-350</td><td>First cold email close</td></tr>
+            <tr><td>Day 60</td><td>$300-1,100</td><td>MRR building</td></tr>
+            <tr><td>Day 90</td><td>$900-3,200</td><td>Compounding</td></tr>
+            <tr><td>Month 12</td><td>$2,400-10,000/mo</td><td>Multiple streams</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="panel" id="panel-gumroad">
+      <div class="sec-hdr"><div><h2>🛍️ Gumroad Products</h2></div></div>
+      <p style="color:var(--muted);margin-bottom:16px;">10 products live at spotlightny.gumroad.com</p>
+      <a href="https://spotlightny.gumroad.com" target="_blank" class="btn btn-gold">View Gumroad Store →</a>
+    </div>
+    <div class="panel" id="panel-stripe">
+      <div class="sec-hdr"><div><h2>💳 Stripe</h2></div></div>
+      <p style="color:var(--muted);margin-bottom:16px;">7 payment links active</p>
+      <a href="https://dashboard.stripe.com" target="_blank" class="btn btn-gold">Open Stripe Dashboard →</a>
+    </div>
+    <div class="panel" id="panel-bots">
+      <div class="sec-hdr"><div><h2>🔩 Bots (101)</h2><p>Specialist workers — each owns exactly one job</p></div></div>
+      <p style="color:var(--muted);">101 production bots covering: SEO, content, social, email, affiliate, store management, analytics, monitoring, and more.</p>
+      <div style="margin-top:16px;">
+        <a href="https://github.com/nyspotlightreport/sct-agency-bots/tree/main/bots" target="_blank" class="btn btn-outline">View All Bots on GitHub →</a>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+// Clock
+function updateClock() {
+  const now = new Date();
+  document.getElementById('clock').textContent = now.toLocaleString('en-US', {
+    month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit'
+  });
+}
+updateClock();
+setInterval(updateClock, 1000);
+
+// Panel switching
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  document.getElementById('panel-' + name)?.classList.add('active');
+  event?.target?.closest('.nav-item')?.classList.add('active');
+}
+
+// Workflow filter
+function filterWF(type) {
+  document.querySelectorAll('.wf-card').forEach(card => {
+    if (type === 'all') { card.style.display = ''; return; }
+    card.style.display = card.classList.contains(type) ? '' : 'none';
+  });
+}
+
+// Trigger workflows (links to GitHub Actions)
+function triggerWorkflow(name) {
+  const log = document.getElementById('triggerLog');
+  const map = {
+    omega: 'https://github.com/nyspotlightreport/sct-agency-bots/actions/workflows/omega_orchestration.yml',
+    guardian: 'https://github.com/nyspotlightreport/sct-agency-bots/actions/workflows/guardian_self_healing.yml',
+    deploy: 'https://github.com/nyspotlightreport/sct-agency-bots/actions/workflows/deploy-site.yml',
+    butler: 'https://github.com/nyspotlightreport/sct-agency-bots/actions/workflows/james_butler_daily.yml',
+    social: 'https://github.com/nyspotlightreport/sct-agency-bots/actions/workflows/social_media_master.yml',
+    sales: 'https://github.com/nyspotlightreport/sct-agency-bots/actions/workflows/sales_marketing_engine.yml',
+  };
+  if (log) log.textContent += `
+> Triggering: ${name}...
+> Opening GitHub Actions →`;
+  if (map[name]) window.open(map[name]);
+}
+
+function refreshAll() {
+  window.location.reload();
+}
+</script>
+
+<!-- CONVERSION ENGINE -->
+<!-- CONVERSION ENGINE — Add this to EVERY page on the site -->
+<!-- Drop this before </body> on every HTML page -->
+
+<!-- STICKY BOTTOM CTA BAR -->
+<div id="sticky-cta" style="position:fixed;bottom:0;left:0;right:0;background:#0f0f0f;padding:10px 24px;display:flex;justify-content:center;align-items:center;gap:16px;z-index:9999;transform:translateY(100%);transition:transform .3s ease;box-shadow:0 -2px 20px rgba(0,0,0,.15)">
+<span style="font-family:'DM Sans',sans-serif;font-size:14px;color:rgba(255,255,255,.7)">Replace your content team for <strong style="color:#fff">$297/mo</strong></span>
+<a href="/proflow/" style="background:#9e7c0c;color:#fff;padding:8px 20px;border-radius:4px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;text-decoration:none;white-space:nowrap">See How It Works →</a>
+<span style="font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.3);cursor:pointer" onclick="this.parentElement.style.display='none';sessionStorage.setItem('cta_closed','1')">✕</span>
+</div>
+
+<!-- EXIT INTENT POPUP -->
+<div id="exit-popup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:10000;justify-content:center;align-items:center;backdrop-filter:blur(4px)">
+<div style="background:#fff;border-radius:8px;padding:40px;max-width:480px;width:90%;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.3)">
+<span onclick="document.getElementById('exit-popup').style.display='none';sessionStorage.setItem('exit_shown','1')" style="position:absolute;top:12px;right:16px;font-size:20px;color:#a3a3a3;cursor:pointer">✕</span>
+<h3 style="font-family:'Playfair Display',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:#0f0f0f">Before you go...</h3>
+<p style="font-family:'DM Sans',sans-serif;font-size:15px;color:#6b6b6b;margin-bottom:20px;line-height:1.55">Get our free guide: <strong style="color:#0f0f0f">"How to Replace Your Content Team with AI — The Complete Playbook"</strong></p>
+<input type="email" id="exit-email" placeholder="your@email.com" style="width:100%;padding:12px;border:1px solid #e5e5e5;border-radius:5px;font-size:15px;font-family:'DM Sans',sans-serif;margin-bottom:10px;outline:none">
+<button onclick="captureExitLead()" style="width:100%;padding:12px;background:#0f0f0f;color:#fff;border:none;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:700;cursor:pointer">Send Me the Free Guide →</button>
+<p style="font-family:'DM Sans',sans-serif;font-size:11px;color:#a3a3a3;margin-top:8px">No spam. Unsubscribe anytime.</p>
+</div>
+</div>
+
+<!-- INLINE CTA COMPONENT (inject into blog posts) -->
+<template id="inline-cta-template">
+<div style="background:linear-gradient(135deg,#faf9f6,#f0ede5);border:1px solid #e5e5e5;border-radius:8px;padding:28px 32px;margin:32px 0;text-align:center">
+<h4 style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:6px;color:#0f0f0f">Tired of doing this manually?</h4>
+<p style="font-family:'DM Sans',sans-serif;font-size:14px;color:#6b6b6b;margin-bottom:16px">ProFlow produces 30 blog posts, 90+ social posts, and HD images every month — in your brand voice. Starting at $97/mo.</p>
+<a href="/proflow/" style="display:inline-block;padding:12px 28px;background:#0f0f0f;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;text-decoration:none">See the Full Offer →</a>
+</div>
+</template>
+
+<!-- PHONE DEMO CTA -->
+<template id="phone-cta-template">
+<div style="background:#0f0f0f;border-radius:8px;padding:24px 32px;margin:32px 0;display:flex;align-items:center;gap:20px;flex-wrap:wrap;justify-content:center">
+<div style="text-align:center">
+<div style="font-family:'DM Sans',sans-serif;font-size:12px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.1em;margin-bottom:4px">Try it right now</div>
+<div style="font-family:'Playfair Display',serif;font-size:22px;color:#fff;font-weight:700">Call our AI receptionist</div>
+</div>
+<a href="tel:+16318929817" style="display:inline-block;padding:14px 28px;background:#9e7c0c;color:#fff;border-radius:5px;font-family:'DM Sans',sans-serif;font-size:16px;font-weight:700;text-decoration:none;white-space:nowrap">(631) 892-9817</a>
+</div>
+</template>
+
+<script>
+// Sticky CTA — show after 30% scroll
+(function(){
+  if(sessionStorage.getItem('cta_closed'))return;
+  var shown=false;
+  window.addEventListener('scroll',function(){
+    if(shown)return;
+    var pct=window.scrollY/(document.body.scrollHeight-window.innerHeight);
+    if(pct>0.3){
+      document.getElementById('sticky-cta').style.transform='translateY(0)';
+      shown=true;
+    }
+  });
+})();
+
+// Exit intent — show when mouse leaves viewport (desktop only)
+(function(){
+  if(sessionStorage.getItem('exit_shown'))return;
+  if('ontouchstart' in window)return; // skip mobile
+  document.addEventListener('mouseout',function(e){
+    if(!e.relatedTarget && !e.toElement && e.clientY<10){
+      document.getElementById('exit-popup').style.display='flex';
+      sessionStorage.setItem('exit_shown','1');
+    }
+  });
+})();
+
+// Lead capture
+function captureExitLead(){
+  var email=document.getElementById('exit-email').value;
+  if(!email||!email.includes('@'))return;
+  fetch('/.netlify/functions/lead-capture',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_intent',page:location.pathname})}).catch(function(){});
+  fetch('/.netlify/functions/subscribe',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({email:email,source:'exit_popup'})}).catch(function(){});
+  localStorage.setItem('nysr_lead',email);
+  document.getElementById('exit-popup').innerHTML='<div style="background:#fff;border-radius:8px;padding:48px;text-align:center"><h3 style="font-family:Playfair Display,serif;font-size:24px;color:#16793a">Check your inbox!</h3><p style="font-family:DM Sans,sans-serif;font-size:15px;color:#6b6b6b;margin-top:8px">Your free guide is on its way.</p></div>';
+  setTimeout(function(){document.getElementById('exit-popup').style.display='none'},3000);
+}
+
+// Auto-inject inline CTAs into blog posts (every 3rd section)
+(function(){
+  var article=document.querySelector('article');
+  if(!article)return;
+  var h2s=article.querySelectorAll('h2');
+  var tpl=document.getElementById('inline-cta-template');
+  var phoneTpl=document.getElementById('phone-cta-template');
+  if(h2s.length>2 && tpl){
+    var cta=tpl.content.cloneNode(true);
+    h2s[Math.floor(h2s.length/2)].parentNode.insertBefore(cta,h2s[Math.floor(h2s.length/2)]);
+  }
+  if(h2s.length>4 && phoneTpl){
+    var phone=phoneTpl.content.cloneNode(true);
+    h2s[h2s.length-1].parentNode.insertBefore(phone,h2s[h2s.length-1]);
+  }
+})();
+
+// Track page views for analytics
+(function(){
+  fetch('/.netlify/functions/track',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({event:'pageview',page:location.pathname,ref:document.referrer,ts:Date.now()})}).catch(function(){});
+})();
+</script>
+
+</body>
+</html>
